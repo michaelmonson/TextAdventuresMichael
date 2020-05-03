@@ -27,6 +27,9 @@ namespace ReturnToTheMisersHouse
 
             var misersHouse = new MisersHouseMain();
             misersHouse.displayGameIntro();
+
+            misersHouse.showRoomInfo();
+
             misersHouse.displayGameEnding();
 
 
@@ -40,7 +43,21 @@ namespace ReturnToTheMisersHouse
             Console.Write("\n Greetings Weary Traveler! ");
             Console.Write("\n\n   > What is thy name? ");
             var name = Console.ReadLine();
-            playerName = processPlayerName(name);
+
+            var player = new Player();
+            playerName = player.processPlayerName(name, playerName);
+        }
+
+        public void showRoomInfo()
+        {
+            //Move into a separate function:
+            Console.WriteLine($"{dl} You are on the Front Porch");
+
+            //replace with variable
+            Console.WriteLine($"\n There is a mat here.");
+
+            Console.Write($"\n  Press any key to continue.");
+            playerInput = Console.ReadLine();
         }
 
         public void displayGameEnding()
@@ -53,20 +70,7 @@ namespace ReturnToTheMisersHouse
         }
 
 
-        private string processPlayerName(string name)
-        {
-            if (name.Trim().Length > 0)
-            {
-                playerName = name;
-                Console.Write($"{dl} Welcome {playerName}!  Let us begin your adventure this day!'");
-            }
-            else
-            {
-                Console.Write($"{dl} Very well... if thou shall not reveal thy true identity, I shall call thee... '{playerName}!'");
-            }
-
-            return playerName;
-        }
+        
 
 
 
