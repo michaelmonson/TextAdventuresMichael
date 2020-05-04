@@ -28,7 +28,10 @@ namespace ReturnToTheMisersHouse
             var misersHouse = new MisersHouseMain();
             misersHouse.displayGameIntro();
 
-            misersHouse.showRoomInfo();
+            var roomLocation = new RoomLocation();
+            RoomLocation[] roomLocations = roomLocation.GenerateRoomData();
+
+            misersHouse.showRoomInfo(); // Just temporary for testing...
 
             misersHouse.displayGameEnding();
 
