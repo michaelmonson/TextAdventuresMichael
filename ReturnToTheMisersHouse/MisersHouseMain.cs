@@ -40,8 +40,25 @@ namespace ReturnToTheMisersHouse
 
         public void displayGameIntro()
         {
-            Console.WriteLine("        *** RETURN TO THE MISER'S House! ***");
+       
 
+        Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n");
+            Console.WriteLine("\t\t\t\t ╔══════════════════════════════════════════╗");
+            Console.WriteLine("\t\t\t\t ║   *** RETURN TO THE MISER'S House! ***   ║");
+            Console.WriteLine("\t\t\t\t ╚══════════════════════════════════════════╝");
+            Console.ResetColor();
+
+            Console.WriteLine("\n Many of the autumn leaves have fallen from the trees that surround the house.  You glance around at the grounds"
+                            + "\n that must have been stately and well groomed at one time.  Clearly that was years ago, for most of the trees"
+                            + "\n are now overgrown and a couple are encroaching upon the large house.");
+            Console.WriteLine("\n The glass in many of the windows is warped, clearly showing their age.  Several of the windows have cracks "
+                            + "\n in them.  One attic window, high above the porch, is of beautiful stained glass.  Clearly this home was built"
+                            + "\n with pride and great skill, at a time where the architects and masons knew their craft well.");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\n               >> Game has been Optimized for 112 x 30 Character Resolution <<");
+            Console.ResetColor();
 
             Console.Write("\n Greetings Weary Traveler! ");
             Console.Write("\n\n   > What is thy name? ");
