@@ -99,13 +99,8 @@ namespace ReturnToTheMisersHouse
             Console.Clear();
 
             //Game is starting...
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine($"\n\t\t\t>> Game has been Optimized for {maxColumns} x 30 Character Resolution <<");
-            Console.ResetColor();
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\n\n EXPLORE THE MISER'S HOUSE!");
-            Console.ResetColor();
+            WriteColorizedLine(ConsoleColor.DarkYellow, $"\n\t\t\t>> Game has been Optimized for {maxColumns} x 30 Character Resolution <<");
+            WriteColorizedLine(ConsoleColor.Green, "\n\n EXPLORE THE MISER'S HOUSE!");
 
             //Greet & Identify Player:
             Console.Write("\n Greetings Weary Traveler! ");
