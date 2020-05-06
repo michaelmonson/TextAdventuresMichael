@@ -81,9 +81,18 @@ namespace ReturnToTheMisersHouse
             Console.WriteLine("\n INSTRUCTIONS");
             Console.WriteLine("\n By playing this game, you are stepping back into time... to the golden age of text adventures!");
             Console.WriteLine(FormatTextWidth(maxColumns, "\n A text adventure is \"interactive fiction!\"  It is played without a mouse, and all controls are done through the keyboard.   Text Adventures are executed through a console or command-line interface (DOS).  The only graphics and sound affects in this game are those that come from your imagination!"));
-            Console.WriteLine("\n To play a text adventure, you must interact with the game by entering commands, usually a verb followed by a noun.");
-            Console.WriteLine(" Type commands and see what happens! To move about, type the letter representing the compass direction you wish to go.");
-            Console.WriteLine(" ");
+            Console.WriteLine(" To play a text adventure, you must interact with the game by entering commands, usually a verb followed by a noun.");
+            Console.WriteLine("    * Type commands and see what happens!");
+            Console.WriteLine("    * To move about, type the letter representing the compass direction you wish to go.");
+            Console.WriteLine("    * Or you can type the full direction name if you are verbose:  North(N), South(S), East(E), West(W)");
+            Console.WriteLine("    * Example of Commands (Verb/Noun): move mat, get treasure, drop brick, feed cat.");
+            Console.WriteLine("    * Pick up things by saying: get rope, get bucket, and eventually 'get all' and 'pick up' may be understood.");
+            Console.WriteLine("    * Drop objects in a similar fashion: drop rope, drop onion, etc.");
+            Console.WriteLine("    * Other important commands include: look, inventory(i), say, score");
+            Console.WriteLine("    * Many other words and commands are understood, but you'll have to discover 'em!");
+            Console.WriteLine("\n Many treasures can be found within the walls of the Miser's house.  May you find them all!");
+            Console.WriteLine(" Of course, a number of dangers will lurk, deep within the recesses of the Miser's house... beware!");
+            Console.WriteLine(" Try to escape from the house without losing your life! \n");
                         
             WriteColorizedLine(ConsoleColor.Cyan, "     > Press <ENTER> to begin thy adventure...");
             var input = Console.ReadLine();
@@ -106,9 +115,9 @@ namespace ReturnToTheMisersHouse
             playerName = player.processPlayerName(name, playerName);
 
             Console.WriteLine(FormatTextWidth(maxColumns, "\n\n Many of the autumn leaves have fallen from the trees that surround the house.  You glance around at the grounds that must have been stately and well groomed at one time.  Clearly that was years ago, for most of the trees are now overgrown and a couple are encroaching upon the large house."));
-            Console.WriteLine(FormatTextWidth(maxColumns, "\n The glass in many of the windows is warped, showing their great age.  Several of the windows have cracks in them.  One attic window, high above the porch, is of beautiful stained glass.  Clearly this home was built with pride and great skill, at a time where the architects and masons knew their craft well."));
+            Console.WriteLine(FormatTextWidth(maxColumns, " The glass in many of the windows is warped, showing their great age.  Several of the windows have cracks in them.  One attic window, high above the porch, is of beautiful stained glass.  Clearly this home was built with pride and great skill, at a time where the architects and masons knew their craft well."));
 
-            Console.Write($"{sl}   > Press enter to continue:");
+            Console.Write($"   > Press enter to continue:");
             input = Console.ReadLine();
         }
 
