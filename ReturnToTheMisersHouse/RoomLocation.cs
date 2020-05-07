@@ -10,7 +10,7 @@ namespace ReturnToTheMisersHouse
         public string Name { get; set; }
         public string DescriptionShort { get; set; } //for allowing toggle between terse/verbose
         public string Description { get; set; }
-        public int[] locationMap = new int[5];
+        public int[] locationMap = new int[4]; //TODO: Why is this set to '5' ?  Changing it to 4 (N,S,E,W)
 
         //Standardize Formatting:
         public string dl = "\n\n"; //double line

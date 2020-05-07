@@ -7,9 +7,10 @@ namespace ReturnToTheMisersHouse
     class MisersHouseMain
     {
         //Initialize Game Variables:
+        public static RoomLocation[] roomLocations = null;
         public string playerName = "Zork Adventurer";
         public string playerInput = "";
-        public int playerLocation = 0;
+        public static int playerLocation = 0;
         public int totalPoints = 0;
 
         //Standardize Formatting:
@@ -32,13 +33,13 @@ namespace ReturnToTheMisersHouse
         //       At first I will do it within this class (i.e. "Program"), but they should be 
         //       moved out eventually into separate classes.  Then I can re-use them in other text adventures.
         // ----------------------------------------------------------------------------------------------------
-
-        var misersHouse = new MisersHouseMain();
+                
+            var misersHouse = new MisersHouseMain();
             misersHouse.displayGameIntro();
 
             //Instantiate RoomLocation class and populate actual Room Data:
             var roomLocation = new RoomLocation();
-            RoomLocation[] roomLocations = roomLocation.GenerateRoomData();
+            roomLocations = roomLocation.GenerateRoomData();
 
             int gameIsActive = 1;
 
@@ -46,14 +47,24 @@ namespace ReturnToTheMisersHouse
             while (gameIsActive > 0)
             {
                 //Display Room data.
-                roomLocation.showRoomInfo(roomLocations[misersHouse.playerLocation]);
+                roomLocation.showRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
 
-                //Get Player Input:
-                while (misersHouse.playerInput.Trim().Length < 1)
+                bool refreshRoom = false;
+                while (!refreshRoom)
                 {
-                    Console.Write($"{sl}   ? ");
-                    misersHouse.playerInput = Console.ReadLine();
+
+                    refreshRoom = false;
+                    //Get Player Input:
+                   // while (misersHouse.playerInput.Trim().Length < 1)
+                    //{
+                        Console.Write($"{sl}   ? ");
+                        misersHouse.playerInput = Console.ReadLine();
+                    //}
+
+                    //Player entered something... time to analyze!
+                    refreshRoom = LanguageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation);
                 }
+
                 
 
                 //...MORE CODE!  When ready to end, change the 'gameIsActive' code...
@@ -77,16 +88,15 @@ namespace ReturnToTheMisersHouse
             Console.WriteLine("\n\t\t\t\t\t     By Michael Monson ");
             Console.WriteLine("\n\t\t   Based on 'The Miser's House' by M.J. Lansing in 1981 - nearly 40 years ago!");
             Console.ResetColor();
-
-            Console.WriteLine("\n INSTRUCTIONS");
+                        
             Console.WriteLine("\n By playing this game, you are stepping back into time... to the golden age of text adventures!");
             Console.WriteLine(FormatTextWidth(maxColumns, "\n A text adventure is \"interactive fiction!\"  It is played without a mouse, and all controls are done through the keyboard.   Text Adventures are executed through a console or command-line interface (DOS).  The only graphics and sound affects in this game are those that come from your imagination!"));
             Console.WriteLine(" To play a text adventure, you must interact with the game by entering commands, usually a verb followed by a noun.");
-            Console.WriteLine("    * Type commands and see what happens!");
+            Console.WriteLine("    * Type commands and see what happens!  Part of the joy is learning how to interact.  Use your imagination!");
             Console.WriteLine("    * To move about, type the letter representing the compass direction you wish to go.");
             Console.WriteLine("    * Or you can type the full direction name if you are verbose:  North(N), South(S), East(E), West(W)");
             Console.WriteLine("    * Example of Commands (Verb/Noun): move mat, get treasure, drop brick, feed cat.");
-            Console.WriteLine("    * Pick up things by saying: get rope, get bucket, and eventually 'get all' and 'pick up' may be understood.");
+            Console.WriteLine("    * Pick up things by typing: get rope, get bucket, and eventually 'get all' and 'pick up' may be understood.");
             Console.WriteLine("    * Drop objects in a similar fashion: drop rope, drop onion, etc.");
             Console.WriteLine("    * Other important commands include: look, inventory(i), say, score");
             Console.WriteLine("    * Many other words and commands are understood, but you'll have to discover 'em!");
@@ -100,19 +110,29 @@ namespace ReturnToTheMisersHouse
 
             //Game is starting...
             WriteColorizedLine(ConsoleColor.DarkYellow, $"\n\t\t\t>> Game has been Optimized for {maxColumns} x 30 Character Resolution <<");
-            WriteColorizedLine(ConsoleColor.Green, "\n\n EXPLORE THE MISER'S HOUSE!");
+            WriteColorizedLine(ConsoleColor.Green, $"\n{dl} EXPLORE THE MISER'S HOUSE!");
+
+            //Render ASCII HOUSE:
+            WriteColorizedLine(ConsoleColor.White,      "\n\n      ':.                ");
+            WriteColorizedLine(ConsoleColor.DarkGray, "\n         []___________         ");
+            WriteColorizedLine(ConsoleColor.DarkRed, "\n        /\\            \\       ");
+            WriteColorizedLine(ConsoleColor.DarkRed, "\n    ___/  \\_____/\\_____\\__    ");
+            WriteColorizedLine(ConsoleColor.DarkYellow, "\n---/\\___\\ |''''''''''''|__\\-------");
+            WriteColorizedLine(ConsoleColor.DarkYellow, "\n   ||'''| |'' ' || ' ''|''|");
+            WriteColorizedLine(ConsoleColor.Green, "\n   ``\"\"\"`\"`\"\"\"\"'))'\"\"\"\"`\"\"``");
+            WriteColorizedLine(ConsoleColor.Green, "\n               //                 ");
 
             //Greet & Identify Player:
-            Console.Write("\n Greetings Weary Traveler! ");
-            Console.Write("\n\n   > What is thy name? ");
+            Console.Write($"{dl} Greetings Weary Traveler! ");
+            WriteColorizedLine(ConsoleColor.Cyan, $"{dl}   > What is thy name? ");
             var name = Console.ReadLine();
             var player = new Player();
             playerName = player.processPlayerName(name, playerName);
-
-            Console.WriteLine(FormatTextWidth(maxColumns, "\n\n Many of the autumn leaves have fallen from the trees that surround the house.  You glance around at the grounds that must have been stately and well groomed at one time.  Clearly that was years ago, for most of the trees are now overgrown and a couple are encroaching upon the large house."));
+            WriteColorizedLine(ConsoleColor.Yellow, $"{dl} Let us Begin...");
+            Console.WriteLine(FormatTextWidth(maxColumns, $"{dl} As you slowly walk up the cobblestone driveway, you notice that many of the autumn leaves have fallen from the trees that surround the house.  You glance around at the grounds that must have been stately and well groomed at one time.  Clearly that was years ago, for most of the trees are now overgrown and a couple are encroaching upon the large house."));
             Console.WriteLine(FormatTextWidth(maxColumns, " The glass in many of the windows is warped, showing their great age.  Several of the windows have cracks in them.  One attic window, high above the porch, is of beautiful stained glass.  Clearly this home was built with pride and great skill, at a time where the architects and masons knew their craft well."));
 
-            Console.Write($"   > Press enter to continue:");
+            WriteColorizedLine(ConsoleColor.Cyan, "   > Press enter to continue:");
             input = Console.ReadLine();
         }
 
