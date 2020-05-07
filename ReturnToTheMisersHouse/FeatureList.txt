@@ -1,0 +1,110 @@
+﻿CONTAINED WITHIN THIS DOCUMENT ARE THE LIST OF FEATURES, BOTH REQUIRED, AND WANTED:
+
+I love that these are all my own programming structures... some ideas I am certainly borrowing
+from other games and programs, of course, but many I am reworking to suit the needs of my program. :-)
+
+--------------------
+REQUIRED TASKS:
+--------------------
+   * Define object for objects ;-)
+       - Create a programmatic object to represent object state and other properties.
+       - Object Room Location.  This is to track where the object is.
+            > Greater than Zero indicates the room it is in.
+            > Zero could represent that you have it in your inventory
+            > A negative value means a state of disrepair, damage, or being utterly lost.
+       - Many objects are unmovable, but some may move.
+            > I may choose to randomly scatter certain treasures about.
+            > However, many puzzles require specific objects be in specific places.
+       - Object Interaction.  Some objects require other objects to work.  
+       - Object Size;  Object Weight  (but this will only come later!)
+
+   * Enhance the language parser... a lot!  Language parsing is far too limited in the miser's house.
+       - Below are examples of improvements that will help the game seem more intelligent and interesting:
+       - Multiple responses for not understanding something:
+            > "I don't understand," "What?," "That makes no sense," "I fail to understand," "Try a different command"
+
+   * Add an ASCII art image of a small mansion with leafless trees outside.
+   * Limit the number of items a player can have 
+       - Track WEIGHT of objects being carried.  Limit number of items a player can have by weight.
+       - Track the SIZE of objects.  If something is bulky or combersome, it limits items that can be carried.
+       - Your pack is too full!  Not everything can fit in a backpack or pockets
+       - Perhaps finding a backpack increases what can be carried.
+       - Be creative!  But this is only the beginning... save these features for later.
+   * Expand upon the basic directions.  Not sure if I'll need NE, NW, SE, SW or not.
+       - But certainly I want the ability to "go up" or "go down"
+       - Probably need to support the concept of "in and out" (or leave room)
+       - That way the program can be smart enough to know which way to leave
+             - Especially if there is only one exit!  :-)  Just makes it more flexible for the player!
+             - Logic would control this.  And certainly, if there is more than one exit, it would ask them
+                  "Do you want to leave through the door, or by climbing out the window?"
+             - All of this would have to be tracked though.
+  * Expand room properties so that certain events and things can only happen within the walls of that room.
+  * Elements of time... certain things can happen after a while... time passes.
+  * Elements of strength... make the player become hungry over time... need to find food or will become weak!
+
+
+--------------------
+"NICE TO HAVE'S":
+--------------------
+   * Remove the trailing comma for directions
+   * Exapand the recognized verbs interpreted by the language parser.
+   * Expand the language parser to recognize more complex sentance structure, such as prepositions
+   * Expand the language parser to recognize multiple articles.
+   * Add the ability for the player to interact with "non-movable" objects.
+       - For instance, a desk, or a hat stand, or kitchen cabinets...
+       - Any number of things that do not directly tie to the game itself, but through which interaction
+         seems to make the room more real!
+       - Add funny and unexpected consequences of interacting with certain objects, whether important or not.
+       - Add a default response to most verbs.
+           - For instance, when dropping items, you can say, "Nothing Happens";
+   * Add additional characters to the game; some which stay within an assigned room; others that roam about!
+       - As long as we have a location attribute, they can have their own logic that moves them about
+       - That's the "pseudo real time" element you can have in a "turn based" game.  
+   * Find a way to save your game!
+       - This offers considerable difficulty, as it requires all of the "object states" to be saved.
+       - And how do I perform file I/O in C#?  But it would be a great learning experience.
+       - Well, perhaps it wouldn't be so tough... just save an object state of the players inventory and locatoin
+       - Figure out the miniumum requirements for "game state" and save it to disk.
+       - This is how I can really grow on my programming experience.
+   * Of course, once I support Disk I/O for saving player's games, I can save objects that way too.
+       - Then rather than having it all hard-coded into the game, I simply load it from data files.
+       - But, does it really matter where the data is contained?
+       - If I keep it in the program file, perhaps I move it to it's own "ProgramData" class?
+   * Expand the room objects to also contain Ascii art for some of the rooms (a "fixed size" for console)
+   * A "map" option, though half the fun is for the imagination of the player, and drawing it on paper!
+
+
+--------------------
+CREATIVE IDEAS:
+--------------------
+   * Where appropriate, find creative ways to interweave cross-overs into the story.
+       - In other words, build extra characters, paintings, objects, and so forth into the story.
+       - For intance, in the red room, I could have a painting placed that features a Narnian ship.
+          > From there, find a way to enter Narnia.  :-)  
+          > Do we have Eustace stumble into the house?  Perhaps he is the "noise upstairs"
+          > The only way to get into Narnia would be by discovering Eustace, and getting him into the room with the painting.
+       - Likewise, place a wardrobe into one of the bedrooms.  :-D  Why not call it the "spare room?""
+          > Hide a key somewhere else in the house... must be found to unlock the wardrobe.
+          > Then have a random generator determine whether you can get into Narnia that way.
+          > If I incorporate certain characters into the game, perhaps only Lucy can get into it!
+          > That was going to be my next text adventure... but perhaps it is all the same?
+   * Incorporate Percy Jackson into the story!
+       - Perhaps you encounter him near the pool... or perhaps his father's trident is hidden in the pool of mercury!
+   * Incorporate elements from the X-Men and from Marvel, such as the Avengers!
+   * One could just as easily encounter Thor's hammer in the dungeon as the sword in the stone in the courtyard!
+   * Interweave elements of that awful teenager haunted book.  The house that shows different seasons.
+       - Incorporate the large lugging monster into it, and the children behind the walls!
+       - I really could make this a crazy involved story.
+   * What if the Doctor appears in the house at some point?  
+       - Could his resources help solve challenges?
+       - Perhaps his bag of "Jelly Babies" will help stave off hunger?!
+   * Should we bring Star Trek Characters into the story?  How about Star Wars?  
+       - Imagine a hanger deck below ground, with the Millennium Falcon stored inside!
+       - Do we want to make this story too crazy and eclectic?
+       - We could always have seasame street characters appear.  Imagine Big Bird?
+
+----------------------------------------
+ REQUESTS FROM TESTER'S ~ MY CHILDREN!:
+----------------------------------------
+    * Celeste wants to have a unicorn appear somewhere that you can kiss!  :-)
+    * Celeste also wants the hedgemaze to be easier to navigate... but why?  :-)
