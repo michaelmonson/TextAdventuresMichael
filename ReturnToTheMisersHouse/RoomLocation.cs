@@ -90,7 +90,10 @@ namespace ReturnToTheMisersHouse
                 validCompassLocations += locationMap[i] > 0 ? possibleCompassLocations[i] + ", " : "";
             }
 
-            return validCompassLocations;
+
+            //return validCompassLocations.TrimEnd(',');  //Awesome! :-)  But I have to char's to nix!
+            //return validCompassLocations.TrimEnd(validCompassLocations[validCompassLocations.Length - 1]);
+            return validCompassLocations.Remove(validCompassLocations.Length - 2);
         }
 
 
