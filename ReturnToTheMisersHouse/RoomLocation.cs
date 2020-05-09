@@ -109,8 +109,16 @@ namespace ReturnToTheMisersHouse
             Console.WriteLine($"{sl}{formattedRoomDescription}");
 
             //Describe any objects:
-            //*** replace with variable ***
-            Console.WriteLine($"\n There is a mat here.");
+            //var roomItems = new GameItems[];
+                // int[] locationMap = new int[4];
+            for (int i = 0; i< MisersHouseMain.gameItems.Length; i++)
+            {
+                if (MisersHouseMain.gameItems[i].LocationIndex == currentRoom.LocationIndex
+                        && MisersHouseMain.gameItems[i].StateValue.Equals((int)GameItem.ObjectState.VISIBLE) )
+                {
+                    Console.WriteLine($" There is a {MisersHouseMain.gameItems[0].Name} here.");
+                }                
+            }
 
             //Disclose Available Directions:
             Console.WriteLine($"\n Obvious Exits: {buildCompassDirections(currentRoom.locationMap)}");

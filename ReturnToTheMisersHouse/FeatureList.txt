@@ -77,6 +77,9 @@ REQUIRED TASKS:
 --------------------
 CREATIVE IDEAS:
 --------------------
+   * Consider making an objects initial position random, such as treasures.
+       - That would bring its own hosts of complexity to account for.
+       - Although with many puzzles and riddles, some objects must be carried to other rooms anyway.
    * Where appropriate, find creative ways to interweave cross-overs into the story.
        - In other words, build extra characters, paintings, objects, and so forth into the story.
        - For intance, in the red room, I could have a painting placed that features a Narnian ship.

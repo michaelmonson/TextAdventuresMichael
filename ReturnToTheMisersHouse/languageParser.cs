@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ReturnToTheMisersHouse
@@ -7,14 +8,25 @@ namespace ReturnToTheMisersHouse
     class LanguageParser
     {
 
-        enum Verbs
+        public enum Verbs
         {
-            GET, LOOK, TAKE, MOVE, SLIDE, PUSH, OPEN, READ,
+            GET, LOOK, EXAMINE, TAKE, MOVE, SLIDE, PUSH, OPEN, READ,
             GO, NORTH, N, SOUTH, S, EAST, E, WEST, W, UP, DOWN, IN, OUT,
             TURN, JUMP, SWIM, FIX,
             I, INV, INVENTORY, QUIT, SCORE,
             DROP, SAY, POUR, FILL, UNLOCK,
-            HUG
+            HUG, BURN
+        }
+
+        public enum Objects
+        {
+           
+        }
+
+
+        public enum Nouns
+        {
+            TREE, AIR, GROUND, HOUSE, MAZE, GUM, COMPUTER
         }
 
 
@@ -37,9 +49,9 @@ namespace ReturnToTheMisersHouse
             string playerVerb = "";
             for (int i = 0; i < words.Length; i++)
             {
-                if (Enum.IsDefined(typeof(Verbs), words[i].ToUpper()))
+                if (Enum.IsDefined(typeof(Verbs), words[i]))
                 {
-                    playerVerb = words[i].ToUpper();
+                    playerVerb = words[i];
                 }
             }
 
@@ -113,7 +125,41 @@ namespace ReturnToTheMisersHouse
                     + roomLocation.buildCompassDirections(roomLocation.locationMap));
             }
 
-            return changeRooms;
+
+
+            //OTHER MISCILANEOUS COMMANDS:
+
+
+            //HUGS MEAN LOVE!
+            if (playerVerb == Verbs.HUG.ToString())
+            {
+                if (words.Contains("TREE"))
+                {
+                    Console.WriteLine("There aren't any trees here!");
+                } else
+                {
+                    Console.WriteLine("You are a kind person and hug the " + words[1].ToLower());
+                }
+            }
+
+            //PYROMANIAC LOGIC (BURN)!
+            if (playerVerb == Verbs.BURN.ToString())
+            {
+                if (words.Contains("BOOK") || words.Contains("BOOKS"))
+                {
+                    if (playerLocation == 11)
+                    {
+                        Console.WriteLine("You look through the available books, protect those that are about foxes (keep them safe) and you burn the rest!  Wha ha ha!  A maniacle grin matches the intensity of your eyes as the flames eagerly consume the dry books!");
+                    } else
+                    {
+                        Console.WriteLine("You look around, but cannot find any books to burn!");
+                    }
+                        
+                }
+            }
+
+
+            return changeRooms;  //Determines whether screen refreshes.
         }
 
 

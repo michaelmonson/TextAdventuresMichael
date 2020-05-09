@@ -27,7 +27,7 @@ namespace ReturnToTheMisersHouse
                     Console.Write($"{sl} Sariah!  I know thee!  But thou art a Princess of the Lord! Welcome to the Miser's House, '{playerName}!'");
                     break;
                 case "RUTH":
-                    playerName = "Foxy " + userEnteredName;
+                    playerName = userEnteredName + ", Princess of Foxes!";
                     Console.Write($"{sl} Ruth!  I know thee!  You are a friend of all foxes! Welcome to the Miser's House, '{playerName}!'");
                     break;
                 case "CELESTE":
