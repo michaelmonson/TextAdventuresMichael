@@ -55,6 +55,9 @@ namespace ReturnToTheMisersHouse
                 //Display Room data.
                 roomLocation.showRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
 
+                //Generate current room object list:
+                List<GameItem> roomItems = gameItem.getGameItems(MisersHouseMain.playerLocation);
+
                 bool refreshRoom = false;
                 while (!refreshRoom)
                 {
@@ -66,7 +69,7 @@ namespace ReturnToTheMisersHouse
                     misersHouse.playerInput = Console.ReadLine().ToUpper();
                     
                     //Player entered something... time to analyze!
-                    refreshRoom = LanguageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation);
+                    refreshRoom = LanguageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation, roomItems);
                 }
 
                 

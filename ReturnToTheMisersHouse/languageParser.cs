@@ -36,12 +36,12 @@ namespace ReturnToTheMisersHouse
 
 
         //Evaluate Player Input
-        public static bool AnalyzePlayerInput(string playerInput, int playerLocation /*probably more!*/)
+        public static bool AnalyzePlayerInput(string playerInput, int playerLocation, List<GameItem> roomItems /*probably more!*/)
         {
             //Since a room change initiates a screen refresh, only change value when the player changes their location:
             bool changeRooms = false;
             //var misersHouse = new MisersHouseMain();
-            RoomLocation roomLocation = MisersHouseMain.roomLocations[playerLocation];
+            RoomLocation currentRoom = MisersHouseMain.roomLocations[playerLocation];
 
             //Analyze player input and gather an array of individual words. Doesn't handle punctuation.
             string[] words = playerInput.Split(' ');
@@ -71,17 +71,27 @@ namespace ReturnToTheMisersHouse
             bool validDirection = false;
             bool directionCommand = false;
 
-            //playerVerb.In  ??  Figure it out!  So close. :-)
-            //if (playerVerb.Utilities.In(Verbs.NORTH, Verbs.N) 
-            //{
-            //
-            //}
+                //-----------------------------------------------------
+                //playerVerb.In  ??  Figure it out!  So close. :-)
+                //if (playerVerb.Utilities.In(Verbs.NORTH, Verbs.N) 
+                //{
+                //
+                //}
+                //-----------------------------------------------------
 
             if (playerVerb == Verbs.N.ToString() || playerVerb == Verbs.NORTH.ToString() )
             {
-                if (roomLocation.locationMap[0] > 0)
+                //This is hard-coding at its worst, but I don't have a better way right now:
+                //GameItem frontDoor = roomItems.get["DOOR_FRONT"];
+                var currentItem = roomItems.Find(item => item.ItemId == "DOOR_FRONT");
+                if (playerLocation == 0 && currentItem.StateValue.Equals((int)GameItem.ObjectState.LOCKED))
                 {
-                    MisersHouseMain.playerLocation = roomLocation.locationMap[0];
+                    Console.WriteLine("The door is locked shut!");
+                    return false;
+                }
+                else if (currentRoom.locationMap[0] > 0)
+                {
+                    MisersHouseMain.playerLocation = currentRoom.locationMap[0];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -89,9 +99,9 @@ namespace ReturnToTheMisersHouse
             } 
             else if (playerVerb == Verbs.S.ToString() || playerVerb == Verbs.SOUTH.ToString())
             {
-                if (roomLocation.locationMap[1] > 0)
+                if (currentRoom.locationMap[1] > 0)
                 {
-                    MisersHouseMain.playerLocation = roomLocation.locationMap[1];
+                    MisersHouseMain.playerLocation = currentRoom.locationMap[1];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -99,9 +109,9 @@ namespace ReturnToTheMisersHouse
             }
             else if (playerVerb == Verbs.E.ToString() || playerVerb == Verbs.EAST.ToString())
             {
-                if (roomLocation.locationMap[2] > 0)
+                if (currentRoom.locationMap[2] > 0)
                 {
-                    MisersHouseMain.playerLocation = roomLocation.locationMap[2];
+                    MisersHouseMain.playerLocation = currentRoom.locationMap[2];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -109,9 +119,9 @@ namespace ReturnToTheMisersHouse
             }
             else if (playerVerb == Verbs.W.ToString() || playerVerb == Verbs.WEST.ToString())
             {
-                if (roomLocation.locationMap[3] > 0)
+                if (currentRoom.locationMap[3] > 0)
                 {
-                    MisersHouseMain.playerLocation = roomLocation.locationMap[3];
+                    MisersHouseMain.playerLocation = currentRoom.locationMap[3];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -122,7 +132,7 @@ namespace ReturnToTheMisersHouse
             {
                 Console.WriteLine("\n" + OracleInvalidDirection());
                 Console.WriteLine("\n    > Valid Directions: " 
-                    + roomLocation.buildCompassDirections(roomLocation.locationMap));
+                    + currentRoom.buildCompassDirections(currentRoom.locationMap));
             }
 
 

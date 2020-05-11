@@ -114,9 +114,9 @@ namespace ReturnToTheMisersHouse
             for (int i = 0; i< MisersHouseMain.gameItems.Length; i++)
             {
                 if (MisersHouseMain.gameItems[i].LocationIndex == currentRoom.LocationIndex
-                        && MisersHouseMain.gameItems[i].StateValue.Equals((int)GameItem.ObjectState.VISIBLE) )
+                        && MisersHouseMain.gameItems[i].StateValue >= (int)GameItem.ObjectState.VISIBLE )
                 {
-                    Console.WriteLine($" There is a {MisersHouseMain.gameItems[0].Name} here.");
+                    Console.WriteLine($" There is a {MisersHouseMain.gameItems[i].Name} here.");
                 }                
             }
 
