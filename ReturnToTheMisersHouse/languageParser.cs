@@ -414,7 +414,7 @@ namespace ReturnToTheMisersHouse
             {
                 if (noun.Length > 0)
                 {
-                    if (words.Contains("TREE"))
+                    if (words.Contains(Nouns.TREE.ToString()))
                     {
                         Console.WriteLine("There aren't any trees here!");
                     }
