@@ -32,9 +32,9 @@ namespace ReturnToTheMisersHouse
              *         new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="Visible Description" },
              *         true, true, 8, 5);
              */
-            new GameItem(-1, "MANGO_FOOD",   "mango",      "a juicy mango", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { }, true, true, 1, 1),
-            new GameItem(-1, "FLASHLIGHT",   "flashlight", "small LED flashlight", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="a small, but bright, LED flashlight"}, true, true, 3, 2),
-            new GameItem(-1, "WATER_BOTTLE", "bottle",     "water bottle", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="a cheap, plastic water bottle"}, true, true, 2, 2),
+            new GameItem(-1, "MANGO_FOOD",   "a juicy mango", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { }, true, true, 1, 1),
+            new GameItem(-1, "FLASHLIGHT",   "small LED flashlight", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="a small, but bright, LED flashlight"}, true, true, 3, 2),
+            new GameItem(-1, "WATER_BOTTLE", "water bottle", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="a cheap, plastic water bottle"}, true, true, 2, 2),
                                     //Later on, add logic to track how full the water bottle is, which decreases as you drink from it.  You can refill it though.
         };
 
@@ -47,7 +47,7 @@ namespace ReturnToTheMisersHouse
             Console.WriteLine("\n YOU ARE CARRYING:");
             foreach (var invItem in playerInv)
             {
-                Console.WriteLine($"    > {invItem.NameDetailed}");
+                Console.WriteLine($"    > {invItem.Name}");
             }
         }
 
@@ -55,10 +55,13 @@ namespace ReturnToTheMisersHouse
         public static bool ContainsItem(string itemSearch)
         {
             bool itemFound = false;
-            foreach (var invItem in playerInv)
+            if (itemSearch.Length >= 3)
             {
-                itemFound = invItem.Name.Contains(itemSearch.ToLower());
-                break;
+                foreach (var invItem in playerInv)
+                {
+                    itemFound = invItem.ItemId.Contains(itemSearch);
+                    if (itemFound) { break; }
+                }
             }
             return itemFound;
         }

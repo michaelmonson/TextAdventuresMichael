@@ -11,8 +11,6 @@ namespace ReturnToTheMisersHouse
         public int LocationIndex { get; set; }   //Where the object first appears
         public string ItemId { get; set; }
         public string Name { get; set; }
-        public string NameDetailed { get; set; }
-        //public string Description { get; set; } //NOTE:  Should only need to use the Dictionary of descriptions.
         public int StateValue { get; set; } //correspondes to values in the enumeration.
         public Dictionary<int, string> StateDescription { get; set; } //An array of descriptions for different states/conditions 
         public bool Movable { get; set; }
@@ -24,15 +22,13 @@ namespace ReturnToTheMisersHouse
         {
         }
 
-        public GameItem(int locationIndex, string itemId, string name, string nameDetailed, 
+        public GameItem(int locationIndex, string itemId, string name,
                     int stateValue, Dictionary<int, string> stateDescription,
                     bool movable, bool luggable, int weight, int size)
         {
             LocationIndex = locationIndex;
             ItemId = itemId;
             Name = name;
-            NameDetailed = nameDetailed;
-            //Description = description;
             StateValue = stateValue;
             StateDescription = stateDescription;
             Movable = movable;
@@ -69,13 +65,28 @@ namespace ReturnToTheMisersHouse
         }
 
 
+        public static GameItem FindItem(string itemSearch, List<GameItem> itemList)
+        {
+            GameItem gameItem = null;
+            if (itemSearch.Length >= 3)
+            {
+                foreach (var currentItem in itemList)
+                {
+                    gameItem = currentItem.ItemId.Contains(itemSearch) ? currentItem : null;
+                    if (gameItem != null) { break; }
+                }
+            }
+            return gameItem;
+        }
+
+
         public GameItem[] GenerateGameObjectData()
         {
             GameItem[] gameItems = new GameItem[3];
 
-            gameItems[0] = new GameItem(0, "MAT",        "mat",  "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
-            gameItems[1] = new GameItem(0, "KEY_BRASS",  "key",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
-            gameItems[2] = new GameItem(0, "DOOR_FRONT", "door", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
+            gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
+            gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
+            gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
 
             //63065 DATA plastic bucket,26,vicious snake,4,charmed snake,-2,*golden leaf *,45
             //63066 DATA* bulging moneybag *,46,>$<,-2,*diamond ring *,48

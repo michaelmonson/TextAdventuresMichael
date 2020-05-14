@@ -354,14 +354,31 @@ namespace ReturnToTheMisersHouse
                         Console.WriteLine("\n You are already carrying that!");
                         return false;
                     }
-                    
+
+                    //Generic check for object in room:
+                    GameItem item = GameItem.FindItem(noun, roomItems);
+                    if (item == null)
+                    {
+                        Console.WriteLine($"\n You are unable to find the {noun.ToLower()}");
+                    }
+                    else
+                    {
+                        item.LocationIndex = -1;
+                        item.StateValue = (int)GameItem.ObjectState.INVENTORY;
+                        Console.WriteLine($"\n Taken: {noun.ToLower()}");
+
+                        //TODO:  Make sure that unmovable items cannot be placed in pocket
+                        //TODO:  Also ensure that "hidden" items (especially when supporting "get/take all") can't be discovered.
+                    }
+
                     if (noun == Nouns.MAT.ToString())
                     {
                         var currentItem = roomItems.Find(item => item.ItemId == noun);
                         if (currentItem != null)
                         {
                             Console.WriteLine($"\n You take the {Nouns.MAT.ToString().ToLower()}.");
-                            Console.WriteLine($"\n You found a brass {Nouns.KEY.ToString().ToLower()}!");
+                            MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n"); 
+
 
                             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             //TODO: figure out a clean way to DIRECTLY ACCESS (by name/id) an item within a list
@@ -378,10 +395,7 @@ namespace ReturnToTheMisersHouse
                         }
 
                     }
-                    else
-                    {
-                        Console.WriteLine($"\n You are unable to find the {noun.ToLower()}");
-                    }
+                    
                 }
                 else
                 {
