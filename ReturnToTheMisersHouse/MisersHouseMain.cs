@@ -69,7 +69,7 @@ namespace ReturnToTheMisersHouse
                     misersHouse.playerInput = Console.ReadLine().ToUpper();
                     
                     //Player entered something... time to analyze!
-                    refreshRoom = languageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation, roomItems);
+                    refreshRoom = LanguageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation, roomItems);
                 }
 
                 
