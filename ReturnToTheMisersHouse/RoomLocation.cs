@@ -104,7 +104,7 @@ namespace ReturnToTheMisersHouse
             Console.ResetColor();
 
             //Describe Room Location:
-            var formattedRoomDescription = MisersHouseMain.FormatTextWidth(misersHouse.maxColumns,
+            var formattedRoomDescription = MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns,
                 currentRoom.DescriptionShort + "  " + currentRoom.Description);
             Console.WriteLine($"{sl}{formattedRoomDescription}");
 

@@ -10,7 +10,8 @@ namespace ReturnToTheMisersHouse
 
         public int LocationIndex { get; set; }   //Where the object first appears
         public string ItemId { get; set; }
-        public string Name { get; set; }        
+        public string Name { get; set; }
+        public string NameDetailed { get; set; }
         //public string Description { get; set; } //NOTE:  Should only need to use the Dictionary of descriptions.
         public int StateValue { get; set; } //correspondes to values in the enumeration.
         public Dictionary<int, string> StateDescription { get; set; } //An array of descriptions for different states/conditions 
@@ -23,13 +24,14 @@ namespace ReturnToTheMisersHouse
         {
         }
 
-        public GameItem(int locationIndex, string itemId, string name, 
+        public GameItem(int locationIndex, string itemId, string name, string nameDetailed, 
                     int stateValue, Dictionary<int, string> stateDescription,
                     bool movable, bool luggable, int weight, int size)
         {
             LocationIndex = locationIndex;
             ItemId = itemId;
             Name = name;
+            NameDetailed = nameDetailed;
             //Description = description;
             StateValue = stateValue;
             StateDescription = stateDescription;
@@ -41,8 +43,9 @@ namespace ReturnToTheMisersHouse
 
         public enum ObjectState
         {
+            CLOSED = 3,
             LOCKED = 2,
-            VISIBLE = 1,    //When visible, it can be seen in whichever room it is in.
+            VISIBLE = 1,    //Also in an 'open' state.  When visible, it can be seen by the playerin whichever room it is in.
             INVENTORY = 0,
             HIDDEN = -1,
             DAMAGED = -2,
@@ -70,9 +73,9 @@ namespace ReturnToTheMisersHouse
         {
             GameItem[] gameItems = new GameItem[3];
 
-            gameItems[0] = new GameItem(0, "MAT", "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
-            gameItems[1] = new GameItem(0, "KEY_BRASS", "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
-            gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
+            gameItems[0] = new GameItem(0, "MAT",        "mat",  "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
+            gameItems[1] = new GameItem(0, "KEY_BRASS",  "key",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
+            gameItems[2] = new GameItem(0, "DOOR_FRONT", "door", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
 
             //63065 DATA plastic bucket,26,vicious snake,4,charmed snake,-2,*golden leaf *,45
             //63066 DATA* bulging moneybag *,46,>$<,-2,*diamond ring *,48

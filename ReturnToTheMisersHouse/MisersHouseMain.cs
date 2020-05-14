@@ -9,13 +9,13 @@ namespace ReturnToTheMisersHouse
         //Initialize Game Variables:
         public static RoomLocation[] roomLocations = null;
         public static GameItem[] gameItems = null;
-        public string playerName = "Zork Adventurer";
+        public static string playerName = "Zork Adventurer";
         public string playerInput = "";
         public static int playerLocation = 0;
         public int totalPoints = 0;
 
         //Standardize Formatting:
-        public int maxColumns = 112;
+        public static int maxColumns = 112;
         private static string sl = "\n";  //single line
         private static string dl = "\n\n";  //double line
         private static string ql = "\n\n\n\n"; //quadline
@@ -69,7 +69,7 @@ namespace ReturnToTheMisersHouse
                     misersHouse.playerInput = Console.ReadLine().ToUpper();
                     
                     //Player entered something... time to analyze!
-                    refreshRoom = LanguageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation, roomItems);
+                    refreshRoom = languageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation, roomItems);
                 }
 
                 
