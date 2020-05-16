@@ -48,17 +48,18 @@ namespace ReturnToTheMisersHouse
             LOST = -3
         }
 
-        GameItem[] gameItems;
-
-
-        public List<GameItem> getGameItems(int roomLocation)
+        
+        /*
+         * Return a list of items specific to the players current location.
+         */ 
+        public static List<GameItem> GetRoomItems(int roomLocation)
         {
             List<GameItem> itemList = new List<GameItem>();
-            for (int i = 0; i <  MisersHouseMain.gameItems.Length; i++)
+            foreach (GameItem item in gameItems)
             {
-                if (MisersHouseMain.gameItems[i].LocationIndex == 0)
+                if (item.LocationIndex == roomLocation)
                 {
-                    itemList.Add(MisersHouseMain.gameItems[i]);
+                    itemList.Add(item);
                 }
             }
             return itemList;
@@ -79,14 +80,22 @@ namespace ReturnToTheMisersHouse
             return gameItem;
         }
 
+        //GameItem[] gameItems; //Getting rid of the array, and making it a static List.  More flexible!
+        //public static List<GameItem> gameItems = new List<GameItem>();
 
-        public GameItem[] GenerateGameObjectData()
+        public static List<GameItem> gameItems = new List<GameItem>
         {
-            GameItem[] gameItems = new GameItem[3];
+            //GameItem[] gameItems = new GameItem[3];
+            //List<GameItem> gameItems2 = new List<GameItem>()
 
-            gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
-            gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
-            gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
+            new GameItem (0, "MAT",        "old door mat",      (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5),
+            new GameItem (0, "KEY_BRASS",  "brass door key",    (int)ObjectState.HIDDEN, new Dictionary<int, string> { }, true, true, 1, 1 ),
+            new GameItem (0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100 )
+            //gameItems.Add(new GameItem{ });
+
+            //gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
+            //gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
+            //gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
 
             //63065 DATA plastic bucket,26,vicious snake,4,charmed snake,-2,*golden leaf *,45
             //63066 DATA* bulging moneybag *,46,>$<,-2,*diamond ring *,48
@@ -102,8 +111,8 @@ namespace ReturnToTheMisersHouse
             //63076 DATA "sign saying 'drop coins for luck'",19
 
 
-            return gameItems;
-        }
+            //return gameItems2;
+        };
 
     }
 

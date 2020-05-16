@@ -12,6 +12,9 @@ namespace ReturnToTheMisersHouse
         public string Description { get; set; }
         public int[] locationMap = new int[4]; //TODO: Why is this set to '5' ?  Changing it to 4 (N,S,E,W)
 
+        //Special Locations:
+        public static int LocInventory = -1;
+
         //Standardize Formatting:
         public string dl = "\n\n"; //double line
         public string sl = "\n"; //single line
@@ -111,12 +114,12 @@ namespace ReturnToTheMisersHouse
             //Describe any objects:
             //var roomItems = new GameItems[];
                 // int[] locationMap = new int[4];
-            for (int i = 0; i< MisersHouseMain.gameItems.Length; i++)
+            for (int i = 0; i< GameItem.gameItems.Count; i++)
             {
-                if (MisersHouseMain.gameItems[i].LocationIndex == currentRoom.LocationIndex
-                        && MisersHouseMain.gameItems[i].StateValue >= (int)GameItem.ObjectState.VISIBLE )
+                if (GameItem.gameItems[i].LocationIndex == currentRoom.LocationIndex
+                        && GameItem.gameItems[i].StateValue >= (int)GameItem.ObjectState.VISIBLE )
                 {
-                    Console.WriteLine($" There is a {MisersHouseMain.gameItems[i].Name} here.");
+                    Console.WriteLine($" There is a {GameItem.gameItems[i].Name} here.");
                 }                
             }
 

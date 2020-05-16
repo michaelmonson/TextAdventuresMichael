@@ -88,6 +88,39 @@ namespace ReturnToTheMisersHouse
 
 
 
+        //---------------------------------------------------------------------------------------------------------
+        //  Is C# by value or reference?  I thought that it was BOTH, but primarily pass by value, like in JAVA.
+        //  Meaning, I created a list of ROOM ITEMS based on a master list of game items.  So, is a new object 
+        //  created for the roomItems list?  Or is a reference to the original object preserved?
+        //
+        //  If it *IS* a reference, that means I can affect changes in the sub-list of roomItems, and directly 
+        //  affect the master list.  I don't think so, but if it DOES affect it, then I have an automatic 
+        //  shortcut to the actual item in the masterlist  (because in reality, the refence to a single
+        //  object would exist in BOTH lists.  Again, I don't think that will work... I think it is a 
+        //  COPY of the master item.  But find out what changes what! :-)
+        //
+        //  Awesome!  It IS maintaining a link back to the original object... at least I THINK it is.  I can
+        //  make property changes in the copied object, and it impacts the original object (hidden to visible)
+        //  which means I can directly reference the "currentObject" copied twice (from a master array to a 
+        //  room list, and finally to a targeted single object.  Changes carry back to the origina object)
+        //
+        //  However, I just read this on Microsoft's website, which confirms my original thought, but confuses me. 
+        //  In C#, the language is "pass by value."  If you want to achieve pass by reference, you have to use the 
+        //  'ref' keyword explicitly, meaning the language by default doesn't support pass by reference, you have 
+        //  to TELL the compiler explicitly that "here, it's pass by reference."
+        //
+        //  But I forgot that "passing by value" is for primative values.  When a simple variable is passed as the 
+        //  parameter to any method, it is passed as a value.  When dealing with OBJECTS on the other hand,
+        //  it is passing by reference.  Or at least, the REFERENCE to the object is passed as a value.  
+        //  In C# you never pass objects, you pass their references by value.
+        //
+        //  If you change a value inside the reference type, this will also change the value outside the method as well, 
+        //  since it's pointing at the same reference location in memory. A caveat occurs when you try to assign the 
+        //  variable to a new object inside the method. This will make the variable no longer point at the reference 
+        //  object in memory. Any changes thereafter will not be reflected in the original referenced object.  
+        //
+        //     -->  READ MORE: https://blog.udemy.com/csharp-pass-by-reference/
+        //---------------------------------------------------------------------------------------------------------
 
         //Evaluate Player Input
         public static bool AnalyzePlayerInput(string playerInput, int playerLocation, List<GameItem> roomItems /*probably more!*/)
@@ -538,7 +571,7 @@ namespace ReturnToTheMisersHouse
                 }
                 else
                 {
-                    item.LocationIndex = -1;
+                    item.LocationIndex = RoomLocation.LocInventory;
                     item.StateValue = (int)GameItem.ObjectState.INVENTORY;
                     Console.WriteLine($"\n Taken: {noun.ToLower()}");
 
@@ -554,16 +587,8 @@ namespace ReturnToTheMisersHouse
                         Console.WriteLine($"\n You take the {Nouns.MAT.ToString().ToLower()}.");
                         MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
 
-
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         //TODO: figure out a clean way to DIRECTLY ACCESS (by name/id) an item within a list
-                        //TODO: Also, is C# by value or reference?  Meaning, I created a list of ROOM ITEMS
-                        //      based on a master list of game items.  So, is a new object created for the roomItems list?
-                        //      or is a reference to the original object created?
-                        //      If it is a reference, I can affect chagnes in the sub-list of roomItems, and directly affect the master list.
-                        //      I don't think so, but if it DOES affect it, then I have a shortcut to the actual item in the masterlist 
-                        //      (because in reality, it exists in both lists)  
-                        //      Again, I don't think that will work... I think it is a COPY of the master item.  But find out what changes what! :-)
                         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                         var hiddenKey = roomItems.Find(i => i.ItemId.Contains("KEY"));
                         hiddenKey.StateValue = (int)GameItem.ObjectState.VISIBLE;

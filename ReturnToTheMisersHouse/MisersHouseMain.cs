@@ -8,7 +8,7 @@ namespace ReturnToTheMisersHouse
     {
         //Initialize Game Variables:
         public static RoomLocation[] roomLocations = null;
-        public static GameItem[] gameItems = null;
+        //public static GameItem[] gameItems = GameItem.GetGameItems;
         public static string playerName = "Zork Adventurer";
         public string playerInput = "";
         public static int playerLocation = 0;
@@ -43,8 +43,8 @@ namespace ReturnToTheMisersHouse
             roomLocations = roomLocation.GenerateRoomData();
             
             //GameItems is a static object arry of items used throughout the game:
-            var gameItem = new GameItem();
-            gameItems = gameItem.GenerateGameObjectData();
+            //var gameItem = new GameItem();
+            //gameItems = GameItem.GenerateGameObjectData();
             
 
             int gameIsActive = 1;
@@ -56,7 +56,7 @@ namespace ReturnToTheMisersHouse
                 roomLocation.showRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
 
                 //Generate current room object list:
-                List<GameItem> roomItems = gameItem.getGameItems(MisersHouseMain.playerLocation);
+                List<GameItem> roomItems = GameItem.GetRoomItems(MisersHouseMain.playerLocation);
 
                 bool refreshRoom = false;
                 while (!refreshRoom)
