@@ -8,15 +8,15 @@ namespace ReturnToTheMisersHouse
     class GameItem
     {
 
-        public int LocationIndex { get; set; }   //Where the object first appears
-        public string ItemId { get; set; }
-        public string Name { get; set; }
-        public int StateValue { get; set; } //correspondes to values in the enumeration.
+        public int LocationIndex { get; set; }  //Location that the object first appears
+        public string ItemId { get; set; }      //Unique alphanumeric CONSTANT that is an ID for the item
+        public string Name { get; set; }        //Item Name
+        public int StateValue { get; set; }     //Object state.  Correspondes to enum values.
         public Dictionary<int, string> StateDescription { get; set; } //An array of descriptions for different states/conditions 
-        public bool Movable { get; set; }
-        public bool Luggable { get; set; }
-        public int Weight { get; set; }                 //Max: 50 pounds. Impacts how much the player can carry.
-        public int Size { get; set; }                   //Max: 20 size units (arbitrary). Large, cumbersome loads are difficult.
+        public bool Movable { get; set; }       //Item can be moved, but not taken
+        public bool Luggable { get; set; }      //Item can be taken
+        public int Weight { get; set; }         //Max: 50 pounds. Impacts how much the player can carry.
+        public int Size { get; set; }           //Max: 20 size units (arbitrary). Large, cumbersome loads are difficult.
 
         public GameItem()
         {
@@ -39,13 +39,13 @@ namespace ReturnToTheMisersHouse
 
         public enum ObjectState
         {
+            LOCKED = 4,
             CLOSED = 3,
-            LOCKED = 2,
+            DAMAGED = 2,
             VISIBLE = 1,    //Also in an 'open' state.  When visible, it can be seen by the playerin whichever room it is in.
             INVENTORY = 0,
             HIDDEN = -1,
-            DAMAGED = -2,
-            LOST = -3
+            LOST = -2
         }
 
         

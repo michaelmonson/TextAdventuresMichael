@@ -562,23 +562,33 @@ namespace ReturnToTheMisersHouse
                     return false;
                 }
 
-                //Generic check for object in room:
+                /*
+                 * Generic check for object in room:
+                 *   - Also ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
+                 */
                 GameItem item = GameItem.FindItem(noun, roomItems);
-                if (item == null)
+                if (item == null || (int)item.StateValue < 1)
                 {
                     Console.WriteLine($"\n You are unable to find the {noun.ToLower()}");
                     return false;
                 }
                 else
                 {
-                    item.LocationIndex = RoomLocation.LocInventory;
-                    item.StateValue = (int)GameItem.ObjectState.INVENTORY;
-                    Console.WriteLine($"\n Taken: {noun.ToLower()}");
+                    if (item.Luggable)
+                    {
+                        item.LocationIndex = RoomLocation.LocInventory;
+                        item.StateValue = (int)GameItem.ObjectState.INVENTORY;
+                        Console.WriteLine($"\n Taken: {noun.ToLower()}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n You valiantly attempt to take the {item.Name}, but you are unsuccessful.");
+                    }
 
-                    //TODO:  Make sure that unmovable items cannot be placed in pocket
-                    //TODO:  Also ensure that "hidden" items (especially when supporting "get/take all") can't be discovered.
                 }
 
+
+                //Additional special logic for room-specific scenarios:
                 if (noun == Nouns.MAT.ToString())
                 {
                     var currentItem = roomItems.Find(item => item.ItemId == noun);
