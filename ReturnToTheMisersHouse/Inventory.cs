@@ -23,44 +23,37 @@ namespace ReturnToTheMisersHouse
         public Inventory()
         {
             //default constructor
+        }
 
+
+        public static void InitializeInventory()
+        {
             //There has GOT to be a better way to do this!  But it needs to be created at game start!
             GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "MANGO_FOOD", "a juicy mango", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "this delectable fruit has the power to restore strength to the weak!" }, true, true, 1, 1));
             GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "FLASHLIGHT", "small LED flashlight", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a small, but bright, LED flashlight" }, true, true, 3, 2));
             GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a cheap, plastic water bottle" }, true, true, 2, 2));
         }
 
-
-        //FIXME:  The mat was NOT appearing when adding it to the inventory, and I finally realized
+        //-------------------------------------------------------------------------------------------------------
+        //  FIXED: The mat was NOT appearing when adding it to the inventory, and I finally realized
         //   that it was because I had not added it to this extra list.  In reality, we don't want to
         //   maintain a SEPARATE list for inventory... it's state and location value should be sufficient.
         //   So I need to kill this list, and then simply add them to the master game item array.
         //   For that matter, I don't want to hard-code it to a specific array element, 
         //   so it also NEEDS to become a list me thinks! :-)
+        //-------------------------------------------------------------------------------------------------------
 
-        //Auto-initialize Inventory (only gets called on creation, so I should be able to add
-        //      inventory items to the master list of GameItems, stored in the GameItem.cs class.
-        //      The players inventory won't be initialized until the player enters the command to display inventory.
 
+        [Obsolete("Deprecated, because we are now adding inventory items directly to the Game Items." 
+             + "A status code property (for each object) determines whether an object is visible,"
+             + "hidden, broken, or part of the player's inventory, etc.  Room location also identifies"
+             + " when an item is currently being carried by the player; (inventory room: -1)")]
         public static  List<GameItem> playerInv = new List<GameItem>
         {
-        /* Ex: new GameItem(0, "MAT", "old door mat", (int)ObjectState.VISIBLE, 
-         *         new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="Visible Description" },
-         *         true, true, 8, 5);
-         */
-
-            //There has GOT to be a better way to do this!
-            //GameItem.gameItems.Add( new GameItem( RoomLocation.LocInventory, "MANGO_FOOD", "a juicy mango", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "this delectable fruit has the power to restore strength to the weak!" }, true, true, 1, 1));
-            //GameItem.gameItems.Add( new GameItem(RoomLocation.LocInventory, "FLASHLIGHT", "small LED flashlight", (int) GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a small, but bright, LED flashlight" }, true, true, 3, 2));
-            //GameItem.gameItems.Add( new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle", (int) GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a cheap, plastic water bottle" }, true, true, 2, 2));
-
-        //GameItem gameItem3 = new GameItem();
-        
-        //gameItem3.
-            //new GameItem(RoomLocation.LocInventory, "MANGO_FOOD",   "a juicy mango",        (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="this delectable fruit has the power to restore strength to the weak!"}, true, true, 1, 1),
-            //new GameItem(RoomLocation.LocInventory, "FLASHLIGHT",   "small LED flashlight", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="a small, but bright, LED flashlight"}, true, true, 3, 2),
-            //new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle",         (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE]="a cheap, plastic water bottle"}, true, true, 2, 2)
-                     //Later on, add logic to track how full the water bottle is, which decreases as you drink from it.  You can refill it though.
+            /* Ex: new GameItem(0, "MAT", "old door mat", (int)ObjectState.VISIBLE, 
+             *            new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="Visible Description" },
+             *            true, true, 8, 5);
+             */
         };
 
 
@@ -83,15 +76,6 @@ namespace ReturnToTheMisersHouse
             {
                 Console.WriteLine("    > Nothing");
             }
-            //GameItem.gameItems.AddRange
-            {
-                //There has GOT to be a better way to do this!
-                //GameItem.gameItems.Add( new GameItem( RoomLocation.LocInventory, "MANGO_FOOD", "a juicy mango", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "this delectable fruit has the power to restore strength to the weak!" }, true, true, 1, 1));
-                //GameItem.gameItems.Add( new GameItem( RoomLocation.LocInventory, "FLASHLIGHT", "small LED flashlight", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a small, but bright, LED flashlight" }, true, true, 3, 2));
-                //GameItem.gameItems.Add( new GameItem( RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a cheap, plastic water bottle" }, true, true, 2, 2));
-            }
-
-
         }
 
 
@@ -100,10 +84,13 @@ namespace ReturnToTheMisersHouse
             bool itemFound = false;
             if (itemSearch.Length >= 3)
             {
-                foreach (var invItem in playerInv)
+                foreach (var invItem in GameItem.gameItems)
                 {
-                    itemFound = invItem.ItemId.Contains(itemSearch);
-                    if (itemFound) { break; }
+                    if (invItem.LocationIndex.Equals(RoomLocation.LocInventory))
+                    {
+                        itemFound = invItem.ItemId.Contains(itemSearch);
+                        if (itemFound) { break; }
+                    }                        
                 }
             }
             return itemFound;

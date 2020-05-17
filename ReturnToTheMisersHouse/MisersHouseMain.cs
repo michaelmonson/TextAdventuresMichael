@@ -23,9 +23,8 @@ namespace ReturnToTheMisersHouse
 
         static void Main(string[] args)
         {
-            //FIXME: Failing because of a CS0120 error: Object reference is required for non-static fields.
-            //displayGameIntro();
-            //displayGameEnding();
+            //Add inventory items:
+            Inventory.InitializeInventory();
 
 
         // ----------------------------------------------------------------------------------------------------
