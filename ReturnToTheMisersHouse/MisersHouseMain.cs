@@ -26,6 +26,8 @@ namespace ReturnToTheMisersHouse
             //Add inventory items:
             Inventory.InitializeInventory();
 
+            Console.CursorSize = 100;
+
 
         // ----------------------------------------------------------------------------------------------------
         //TODO:  In order to call non-static methods, I must move them out of the Main class

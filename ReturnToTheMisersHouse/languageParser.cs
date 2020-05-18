@@ -17,7 +17,8 @@ namespace ReturnToTheMisersHouse
 
         public enum Verbs
         {
-            GET, TAKE, PICK, OBTAIN, ACQUIRE, DROP, DUMP, BREAK, DESTROY,
+            GET, TAKE, PICK, OBTAIN, ACQUIRE, 
+            DROP, DUMP, BREAK, DESTROY,
             USE, MOVE, SLIDE, PUSH, OPEN, CLOSE, GIVE,
             POUR, FILL, UNLOCK, LOCK, MAKE, TURN, ROTATE,
             I, INV, INVENTORY, QUIT, EXIT, SCORE, HELP, 
@@ -290,7 +291,14 @@ namespace ReturnToTheMisersHouse
                 languageParser.CmdGet(noun, roomItems);
             }
 
-            //
+
+            /*
+             * ==> DROP / DUMP : drops an item from the players inventory
+             */
+            if (playerVerb == Verbs.DROP.ToString() || playerVerb == Verbs.DUMP.ToString())
+            {
+                languageParser.CmdDrop(noun, playerLocation);
+            }
 
         //---------------------------------
         // OTHER MISCILANEOUS COMMANDS:
@@ -562,6 +570,22 @@ namespace ReturnToTheMisersHouse
                     return false;
                 }
 
+                //Take All:
+                if (noun.Equals("ALL"))
+                {
+                    foreach(GameItem checkItem in roomItems)
+                    {
+                        if (checkItem.Luggable && (int)checkItem.StateValue > 0)
+                        {
+                            checkItem.LocationIndex = RoomLocation.LocInventory;
+                            checkItem.StateValue = (int)GameItem.ObjectState.INVENTORY;
+                            Console.WriteLine($" Taken: {checkItem.Name.ToLower()}");
+                            CmdGetMoveSpecial(checkItem.ItemId, roomItems);
+                        }
+                    }
+                    return false;
+                }
+
                 /*
                  * Generic check for object in room:
                  *   - Also ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
@@ -579,6 +603,7 @@ namespace ReturnToTheMisersHouse
                         item.LocationIndex = RoomLocation.LocInventory;
                         item.StateValue = (int)GameItem.ObjectState.INVENTORY;
                         Console.WriteLine($"\n Taken: {noun.ToLower()}");
+                        CmdGetMoveSpecial(noun, roomItems);
                     }
                     else
                     {
@@ -586,36 +611,128 @@ namespace ReturnToTheMisersHouse
                     }
 
                 }
-
-
-                //Additional special logic for room-specific scenarios:
-                if (noun == Nouns.MAT.ToString())
-                {
-                    var currentItem = roomItems.Find(item => item.ItemId == noun);
-                    if (currentItem != null)
-                    {
-                        Console.WriteLine($"\n You take the {Nouns.MAT.ToString().ToLower()}.");
-                        MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
-
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        //TODO: figure out a clean way to DIRECTLY ACCESS (by name/id) an item within a list
-                        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        var hiddenKey = roomItems.Find(i => i.ItemId.Contains("KEY"));
-                        hiddenKey.StateValue = (int)GameItem.ObjectState.VISIBLE;
-                    }
-                }
-
+                
             }
-            
 
             return false;
         }
 
 
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> MOVE:  Player can move items that are "movable," but it doesn't take them.
+         *            In order to "take" an item, "GET" or "TAKE" must be used.
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private bool CmdMove(string noun, List<GameItem> roomItems)
+        {
+            while (noun.Length == 0)
+            {
+                Console.Write("\n What would you like to move? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                //Check Inventory:
+                if (Inventory.ContainsItem(noun))
+                {
+                    Console.WriteLine($"\n You are carrying the {noun}; nothing happens.");
+                    return false;
+                }
+
+                /*
+                 * Generic check for object in room:
+                 *   - Also ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
+                 */
+                GameItem item = GameItem.FindItem(noun, roomItems);
+                if (item == null || (int)item.StateValue < 1)
+                {
+                    Console.WriteLine($"\n You cannot move something you cannot see!  The {noun.ToLower()} doesn't appear to be close by.");
+                    return false;
+                }
+                else
+                {
+                    if (item.Movable)
+                    {                        
+                        bool somethingHappened = CmdGetMoveSpecial(noun, roomItems);   //Additional logic for room/object-specific scenarios:
+                        if (!somethingHappened)
+                        {
+                            Console.WriteLine($"\n You move the {noun.ToLower()}, but nothing seems to happen");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n You strain to move the {item.Name}, but it doesn't budge!");
+                    }
+                }
+            }
+            return false;
+        }
+
+
+        /*
+            * For special items, when getting or moving it reveals a special item.
+            * Any special object logic should be placed here specifically, so as to only 
+            * called the logic once, especially where "MOVE" and "GET" can both reveal the same thing.
+            * Also, the "GET ALL" command follows an itterative sequence, which was skipping this
+            * logic, and I really didn't want to repeat it more than once! ;-)
+            */
+        private bool CmdGetMoveSpecial(string noun, List<GameItem> roomItems)
+        {
+            bool somethingHappened = false;
+            if (noun == Nouns.MAT.ToString())
+            {
+                var currentItem = roomItems.Find(item => item.ItemId == noun);
+                if (currentItem != null)
+                {
+                    Console.WriteLine($"\n You take the {Nouns.MAT.ToString().ToLower()}.");
+                    MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
+
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    //TODO: figure out a clean way to DIRECTLY ACCESS (by name/id) an item within a list
+                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    var hiddenKey = roomItems.Find(i => i.ItemId.Contains("KEY"));
+                    hiddenKey.StateValue = (int)GameItem.ObjectState.VISIBLE;
+                    somethingHappened = true;
+                }
+            }
+            return somethingHappened;
+        }
+
+
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+        * ==> DROP:
+        * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+        */
+        private bool CmdDrop(string noun, int playerLocation)
+        {
+            var item = GameItem.gameItems.Find(item => item.ItemId.Contains(noun));
+            if (item != null)
+            {
+                if (item.StateValue.Equals((int)GameItem.ObjectState.INVENTORY))
+                {
+                    Console.WriteLine(" Dropped!");
+                    item.LocationIndex = playerLocation;
+                    item.StateValue = (int)GameItem.ObjectState.VISIBLE;
+                }
+                else
+                {
+                    Console.WriteLine($"\n You are not carrying the {noun.ToLower()}.");
+                }
+            }
+            else 
+            {
+
+            }
+            return false;                
+        }
+
+
           //==================================|
-         //     -------------------------      |
-        //   < OTHER MISCILANEOUS COMMANDS >    |
-         //     -------------------------      |
+          //     -------------------------      |
+          //   < OTHER MISCILANEOUS COMMANDS >    |
+          //     -------------------------      |
           //==================================|
 
 
