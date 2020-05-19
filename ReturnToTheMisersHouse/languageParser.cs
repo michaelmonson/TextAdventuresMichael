@@ -683,18 +683,17 @@ namespace ReturnToTheMisersHouse
             bool somethingHappened = false;
             if (noun == Nouns.MAT.ToString())
             {
-                var currentItem = roomItems.Find(item => item.ItemId == noun);
-                if (currentItem != null)
+                var itemMat = roomItems.Find(item => item.ItemId == noun);
+                if (itemMat != null)
                 {
                     Console.WriteLine($"\n You take the {Nouns.MAT.ToString().ToLower()}.");
-                    MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
-
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    //TODO: figure out a clean way to DIRECTLY ACCESS (by name/id) an item within a list
-                    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     var hiddenKey = roomItems.Find(i => i.ItemId.Contains("KEY"));
-                    hiddenKey.StateValue = (int)GameItem.ObjectState.VISIBLE;
-                    somethingHappened = true;
+                    if (hiddenKey != null && hiddenKey.StateValue.Equals((int)GameItem.ObjectState.HIDDEN))
+                    {
+                        MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
+                        hiddenKey.StateValue = (int)GameItem.ObjectState.VISIBLE;
+                        somethingHappened = true;
+                    }                    
                 }
             }
             return somethingHappened;
