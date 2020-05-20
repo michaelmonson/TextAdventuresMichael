@@ -97,6 +97,20 @@ namespace ReturnToTheMisersHouse
         }
 
 
+        public static bool isEmpty()
+        {
+            int inventoryItemCount = 0;
+            foreach (var item in GameItem.gameItems)
+            {
+                if (item.LocationIndex.Equals(RoomLocation.LocInventory))
+                {
+                    inventoryItemCount++;
+                }
+            }
+            return inventoryItemCount == 0 ? true : false;
+        }
+
+
     }
 
 

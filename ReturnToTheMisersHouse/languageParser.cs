@@ -141,6 +141,7 @@ namespace ReturnToTheMisersHouse
             }
 
             //Identify verb/command (first verb encounted) - multiple actions/commands not supported... yet!:
+            bool verbCommandUnderstood = false;
             string playerVerb = "";
             for (int i = 0; i < words.Length; i++)
             {
@@ -316,7 +317,11 @@ namespace ReturnToTheMisersHouse
                 languageParser.CmdBurn(playerLocation, playerVerb, words);
             }
 
+        //---------------------------------
+        // OTHER MISCILANEOUS COMMANDS:
+        //---------------------------------
 
+            //
             return changeRooms;  //Determines whether screen refreshes.
         }
 
@@ -706,6 +711,20 @@ namespace ReturnToTheMisersHouse
         */
         private bool CmdDrop(string noun, int playerLocation)
         {
+            if (Inventory.isEmpty())
+            {
+                Console.WriteLine("\n Your inventory is empty... you have nothing to drop.");
+                return false;
+            }
+
+
+            if (noun.Equals("ALL"))
+            {
+                Console.WriteLine("\n I am sorry, but I cannot comply... why would you want to drop everything?");
+                return false;
+            }
+
+            
             var item = GameItem.gameItems.Find(item => item.ItemId.Contains(noun));
             if (item != null)
             {
@@ -722,7 +741,7 @@ namespace ReturnToTheMisersHouse
             }
             else 
             {
-
+                Console.WriteLine($"\n You do not have a {noun.ToLower()}");
             }
             return false;                
         }
