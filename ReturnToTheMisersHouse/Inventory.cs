@@ -29,9 +29,9 @@ namespace ReturnToTheMisersHouse
         public static void InitializeInventory()
         {
             //There has GOT to be a better way to do this!  But it needs to be created at game start!
-            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "MANGO_FOOD", "a juicy mango", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "this delectable fruit has the power to restore strength to the weak!" }, true, true, 1, 1));
-            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "FLASHLIGHT", "small LED flashlight", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a small, but bright, LED flashlight" }, true, true, 3, 2));
-            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle", (int)GameItem.ObjectState.INVENTORY, new Dictionary<int, string> { [(int)GameItem.ObjectState.VISIBLE] = "a cheap, plastic water bottle" }, true, true, 2, 2));
+            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "MANGO_FOOD",   "a juicy mango",        GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "this delectable fruit has the power to restore strength to the weak!" }, true, true, false, 1, 1));
+            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "FLASHLIGHT",   "small LED flashlight", GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "a small, but bright, LED flashlight" }, true, true, true, 3, 2));
+            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle",         GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "a cheap, plastic water bottle" }, true, true, false, 2, 2));
         }
 
         //-------------------------------------------------------------------------------------------------------
@@ -79,16 +79,16 @@ namespace ReturnToTheMisersHouse
         }
 
 
-        public static bool ContainsItem(string itemSearch)
+        public static bool ContainsItem(string itemToSearch)
         {
             bool itemFound = false;
-            if (itemSearch.Length >= 3)
+            if (itemToSearch.Length >= 3)
             {
                 foreach (var invItem in GameItem.gameItems)
                 {
                     if (invItem.LocationIndex.Equals(RoomLocation.LocInventory))
                     {
-                        itemFound = invItem.ItemId.Contains(itemSearch);
+                        itemFound = invItem.ItemId.Contains(itemToSearch);
                         if (itemFound) { break; }
                     }                        
                 }

@@ -11,10 +11,11 @@ namespace ReturnToTheMisersHouse
         public int LocationIndex { get; set; }  //Location that the object first appears
         public string ItemId { get; set; }      //Unique alphanumeric CONSTANT that is an ID for the item
         public string Name { get; set; }        //Item Name
-        public int StateValue { get; set; }     //Object state.  Correspondes to enum values.
-        public Dictionary<int, string> StateDescription { get; set; } //An array of descriptions for different states/conditions 
+        public ObjectState State { get; set; }  //Object state.  Correspondes to enum values.
+        public Dictionary<ObjectState, string> StateDescription { get; set; } //An array of descriptions for different states/conditions 
         public bool Movable { get; set; }       //Item can be moved, but not taken
         public bool Luggable { get; set; }      //Item can be taken
+        public bool Lockable { get; set; }      //Item can be locked
         public int Weight { get; set; }         //Max: 50 pounds. Impacts how much the player can carry.
         public int Size { get; set; }           //Max: 20 size units (arbitrary). Large, cumbersome loads are difficult.
 
@@ -23,16 +24,17 @@ namespace ReturnToTheMisersHouse
         }
 
         public GameItem(int locationIndex, string itemId, string name,
-                    int stateValue, Dictionary<int, string> stateDescription,
-                    bool movable, bool luggable, int weight, int size)
+                    ObjectState state, Dictionary<ObjectState, string> stateDescription,
+                    bool movable, bool luggable, bool lockable, int weight, int size)
         {
             LocationIndex = locationIndex;
             ItemId = itemId;
             Name = name;
-            StateValue = stateValue;
+            State = state;
             StateDescription = stateDescription;
             Movable = movable;
             Luggable = luggable;
+            Lockable = lockable;
             Weight = weight;
             Size = size;
         }
@@ -85,10 +87,9 @@ namespace ReturnToTheMisersHouse
 
         public static List<GameItem> gameItems = new List<GameItem>
         {
-            new GameItem (0, "MAT",        "old door mat",      (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5),
-            new GameItem (0, "KEY_BRASS",  "brass door key",    (int)ObjectState.HIDDEN, new Dictionary<int, string> { }, true, true, 1, 1 ),
-            new GameItem (0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100 )
-
+            new GameItem (0, "MAT",        "old door mat",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, false, 8, 5),
+            new GameItem (0, "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, true, true, false, 1, 1 ),
+            new GameItem (0, "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED, new Dictionary<ObjectState, string> { }, false, false, false, 200, 100 )
             //gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
             //gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
             //gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);

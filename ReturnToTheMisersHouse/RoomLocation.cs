@@ -117,7 +117,7 @@ namespace ReturnToTheMisersHouse
             for (int i = 0; i< GameItem.gameItems.Count; i++)
             {
                 if (GameItem.gameItems[i].LocationIndex == currentRoom.LocationIndex
-                        && GameItem.gameItems[i].StateValue >= (int)GameItem.ObjectState.VISIBLE )
+                        && GameItem.gameItems[i].State >= GameItem.ObjectState.VISIBLE )
                 {
                     Console.WriteLine($" There is a {GameItem.gameItems[i].Name} here.");
                 }                

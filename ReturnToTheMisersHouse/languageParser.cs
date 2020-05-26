@@ -294,6 +294,16 @@ namespace ReturnToTheMisersHouse
 
 
             /*
+             * ==> MOVE/SLIDE/?? : The player can move an item
+             */
+            if (playerVerb == Verbs.MOVE.ToString() || playerVerb == Verbs.SLIDE.ToString()
+                || playerVerb == Verbs.PUSH.ToString()) 
+            {
+                languageParser.CmdMove(noun, roomItems);
+            }
+
+
+            /*
              * ==> DROP / DUMP : drops an item from the players inventory
              */
             if (playerVerb == Verbs.DROP.ToString() || playerVerb == Verbs.DUMP.ToString())
@@ -301,9 +311,29 @@ namespace ReturnToTheMisersHouse
                 languageParser.CmdDrop(noun, playerLocation);
             }
 
-        //---------------------------------
-        // OTHER MISCILANEOUS COMMANDS:
-        //---------------------------------
+
+            /*
+             * ==> OPEN : Some items must be opened.  Allows the solving of some puzzles.
+             */
+            if (playerVerb == Verbs.OPEN.ToString())
+            {
+                languageParser.CmdOpen(noun, roomItems);
+            }
+
+
+            /*
+             * ==> UNLOCK : Some items must be unlocked.  This will require a key or a special item.
+             */
+            if (playerVerb == Verbs.UNLOCK.ToString())
+            {
+                languageParser.CmdUnlock(noun, roomItems);
+            }
+
+
+
+            //---------------------------------
+            // OTHER MISCILANEOUS COMMANDS:
+            //---------------------------------
 
             //HUGS MEAN LOVE!
             if (playerVerb == Verbs.HUG.ToString())
@@ -493,14 +523,19 @@ namespace ReturnToTheMisersHouse
                 var currentItem = roomItems.Find(item => item.ItemId == "DOOR_FRONT");
                 if (playerLocation == 0)
                 {
-                    if (currentItem.StateValue.Equals((int)GameItem.ObjectState.LOCKED))
+                    if (currentItem.State.Equals(GameItem.ObjectState.LOCKED))
                     { Console.WriteLine("\n The door is locked shut!"); return false; }
-                    else if (currentItem.StateValue.Equals((int)GameItem.ObjectState.CLOSED))
+                    else if (currentItem.State.Equals(GameItem.ObjectState.CLOSED))
                     { Console.WriteLine("\n The door is closed."); return false; }
                     else
-                    { Console.WriteLine("\n You walk past the open door and enter the house..."); changeRooms = true; validDirection = true; }
+                    { 
+                        Console.WriteLine("\n You walk past the open door and enter the house...");
+                        Console.Write("   > Press any key to continue...");
+                        Console.ReadKey();
+                    }
                 }
-                else if (currentRoom.locationMap[0] > 0)
+                
+                if (currentRoom.locationMap[0] > 0)
                 {
                     MisersHouseMain.playerLocation = currentRoom.locationMap[0];
                     changeRooms = true;
@@ -508,6 +543,7 @@ namespace ReturnToTheMisersHouse
                 }
                 directionCommand = true;
             }
+
             else if (directionVerb == Verbs.S.ToString() || directionVerb == Verbs.SOUTH.ToString())
             {
                 if (currentRoom.locationMap[1] > 0)
@@ -518,6 +554,7 @@ namespace ReturnToTheMisersHouse
                 }
                 directionCommand = true;
             }
+
             else if (directionVerb == Verbs.E.ToString() || directionVerb == Verbs.EAST.ToString())
             {
                 if (currentRoom.locationMap[2] > 0)
@@ -528,6 +565,7 @@ namespace ReturnToTheMisersHouse
                 }
                 directionCommand = true;
             }
+
             else if (directionVerb == Verbs.W.ToString() || directionVerb == Verbs.WEST.ToString())
             {
                 if (currentRoom.locationMap[3] > 0)
@@ -580,10 +618,10 @@ namespace ReturnToTheMisersHouse
                 {
                     foreach(GameItem checkItem in roomItems)
                     {
-                        if (checkItem.Luggable && (int)checkItem.StateValue > 0)
+                        if (checkItem.Luggable && (int)checkItem.State > 0)
                         {
                             checkItem.LocationIndex = RoomLocation.LocInventory;
-                            checkItem.StateValue = (int)GameItem.ObjectState.INVENTORY;
+                            checkItem.State = (int)GameItem.ObjectState.INVENTORY;
                             Console.WriteLine($" Taken: {checkItem.Name.ToLower()}");
                             CmdGetMoveSpecial(checkItem.ItemId, roomItems);
                         }
@@ -591,12 +629,13 @@ namespace ReturnToTheMisersHouse
                     return false;
                 }
 
+
                 /*
                  * Generic check for object in room:
                  *   - Also ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
                  */
                 GameItem item = GameItem.FindItem(noun, roomItems);
-                if (item == null || (int)item.StateValue < 1)
+                if (item == null || (int)item.State < 1)
                 {
                     Console.WriteLine($"\n You are unable to find the {noun.ToLower()}");
                     return false;
@@ -606,7 +645,7 @@ namespace ReturnToTheMisersHouse
                     if (item.Luggable)
                     {
                         item.LocationIndex = RoomLocation.LocInventory;
-                        item.StateValue = (int)GameItem.ObjectState.INVENTORY;
+                        item.State = GameItem.ObjectState.INVENTORY;
                         Console.WriteLine($"\n Taken: {noun.ToLower()}");
                         CmdGetMoveSpecial(noun, roomItems);
                     }
@@ -651,7 +690,7 @@ namespace ReturnToTheMisersHouse
                  *   - Also ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
                  */
                 GameItem item = GameItem.FindItem(noun, roomItems);
-                if (item == null || (int)item.StateValue < 1)
+                if (item == null || (int)item.State < 1)
                 {
                     Console.WriteLine($"\n You cannot move something you cannot see!  The {noun.ToLower()} doesn't appear to be close by.");
                     return false;
@@ -691,12 +730,12 @@ namespace ReturnToTheMisersHouse
                 var itemMat = roomItems.Find(item => item.ItemId == noun);
                 if (itemMat != null)
                 {
-                    Console.WriteLine($"\n You take the {Nouns.MAT.ToString().ToLower()}.");
+                    Console.WriteLine($"\n You grab the {Nouns.MAT.ToString().ToLower()}.");
                     var hiddenKey = roomItems.Find(i => i.ItemId.Contains("KEY"));
-                    if (hiddenKey != null && hiddenKey.StateValue.Equals((int)GameItem.ObjectState.HIDDEN))
+                    if (hiddenKey != null && hiddenKey.State.Equals(GameItem.ObjectState.HIDDEN))
                     {
                         MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
-                        hiddenKey.StateValue = (int)GameItem.ObjectState.VISIBLE;
+                        hiddenKey.State = GameItem.ObjectState.VISIBLE;
                         somethingHappened = true;
                     }                    
                 }
@@ -728,11 +767,11 @@ namespace ReturnToTheMisersHouse
             var item = GameItem.gameItems.Find(item => item.ItemId.Contains(noun));
             if (item != null)
             {
-                if (item.StateValue.Equals((int)GameItem.ObjectState.INVENTORY))
+                if (item.State.Equals(GameItem.ObjectState.INVENTORY))
                 {
                     Console.WriteLine(" Dropped!");
                     item.LocationIndex = playerLocation;
-                    item.StateValue = (int)GameItem.ObjectState.VISIBLE;
+                    item.State = GameItem.ObjectState.VISIBLE;
                 }
                 else
                 {
@@ -747,11 +786,105 @@ namespace ReturnToTheMisersHouse
         }
 
 
-          //==================================|
-          //     -------------------------      |
-          //   < OTHER MISCILANEOUS COMMANDS >    |
-          //     -------------------------      |
-          //==================================|
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> OPEN:
+         * 
+         *   //TODO: Need to add the whole inventory system! (began adding on 2020-05-13)
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private bool CmdOpen(string noun, List<GameItem> roomItems)
+        {
+            while (noun.Length == 0)
+            {
+                Console.Write("\n What do you wish to open? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                //Validate locked state:
+                GameItem item = GameItem.FindItem(noun, roomItems);
+
+                if (item == null)
+                {
+                    Console.WriteLine($"\n The {noun.ToLower()} cannot be found.");
+                    return false;
+                }
+                if (item.State.Equals(GameItem.ObjectState.LOCKED))
+                {
+                    Console.WriteLine($"\n The {noun.ToLower()} is locked.  You are unable to open it.");
+                    return false;
+                }
+                if (item.State.Equals(GameItem.ObjectState.CLOSED))
+                {
+                    Console.WriteLine($"\n The {noun.ToLower()} opens easily.");
+                    item.State = GameItem.ObjectState.VISIBLE;
+                    return false;
+                }
+
+            }
+            return false;
+        }
+
+
+      /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+       * ==> UNLOCK:
+       * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+       */
+        private bool CmdUnlock(string noun, List<GameItem> roomItems)
+        {
+            while (noun.Length == 0)
+            {
+                Console.Write("\n What shall you unlock? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                //Validate locked state:
+                GameItem item = GameItem.FindItem(noun, roomItems);
+
+                if (item == null)
+                {
+                    Console.WriteLine($"\n The {noun.ToLower()} cannot be found.");
+                    return false;
+                }
+                if (item.State.Equals(GameItem.ObjectState.LOCKED))
+                {
+                    if (Inventory.ContainsItem("KEY"))
+                    {
+                        Console.WriteLine("   (with key)");
+                        Console.WriteLine($"\n The {noun.ToLower()} is now unlocked.");
+                        item.State = GameItem.ObjectState.CLOSED;
+                    }
+                    else
+                    {
+                        //Console.WriteLine($"\n The {item.Name.ToLower()} remains locked, though using the {noun.ToLower()} was a valiant try!  You are unable to open it.");
+                        Console.WriteLine($"\n The {item.Name.ToLower()} remains locked, though you give it a valiant try!  You are unable to unlock it.");
+
+                    }
+                    return false;
+                }
+                if (item.State.Equals(GameItem.ObjectState.CLOSED))
+                {
+                    Console.WriteLine($"\n The {noun.ToLower()} opens easily.");
+                    item.State = GameItem.ObjectState.VISIBLE;
+                    return false;
+                }
+
+            }
+            return false;
+        }
+
+
+
+        //==================================|
+        //     -------------------------      |
+        //   < OTHER MISCILANEOUS COMMANDS >    |
+        //     -------------------------      |
+        //==================================|
 
 
         private void CmdHugs(string noun, string[] words)
