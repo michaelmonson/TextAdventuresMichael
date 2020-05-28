@@ -2,6 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
+//-------------------------------------------------------------------------------------------------------
+// TODO: Add in a RoomEvent[] array to store special events.  For instance, 
+//       a door slamming shut or something that can change...  
+//       Consider how to integrate it with the existing object state, and where overlap occurrs.
+//       After all, many things are object specific if the player can interact with them.
+//       But in other cases, they are room specific, and may be out of the player's control.
+//       In the case of the door slamming shut, the description should only be displayed ONCE.
+//       It can either be replaced with blank, or the message can be disabled.
+//       If necessary, we can create it as a separate class, with it's own propeties.
+//-------------------------------------------------------------------------------------------------------
+
 namespace ReturnToTheMisersHouse
 {
     class RoomLocation
@@ -96,7 +107,7 @@ namespace ReturnToTheMisersHouse
         /*
          * DISPLAY ROOM INFORMATION TO USER.  Clears screen each time this method is called.
          */
-        public void showRoomInfo(RoomLocation currentRoom)
+        public void ShowRoomInfo(RoomLocation currentRoom)
         {
             //Access public Methods:
             var misersHouse = new MisersHouseMain();
@@ -111,23 +122,35 @@ namespace ReturnToTheMisersHouse
                 currentRoom.DescriptionShort + "  " + currentRoom.Description);
             Console.WriteLine($"{sl}{formattedRoomDescription}");
 
-            //Describe any objects:
-            //var roomItems = new GameItems[];
-                // int[] locationMap = new int[4];
-            for (int i = 0; i< GameItem.gameItems.Count; i++)
+            //Describe any objects in the current room:
+            List<GameItem> roomItems = GameItem.GetRoomItems(MisersHouseMain.playerLocation);
+            foreach (GameItem item in roomItems)
             {
-                if (GameItem.gameItems[i].LocationIndex == currentRoom.LocationIndex
-                        && GameItem.gameItems[i].State >= GameItem.ObjectState.VISIBLE )
+                if (item.State >= GameItem.ObjectState.VISIBLE )
                 {
-                    Console.WriteLine($" There is a {GameItem.gameItems[i].Name} here.");
+                    Console.WriteLine($" There is a {item.Name} here.");
                 }                
             }
 
+            //Special Commands:
+            string specialText = "";
+            switch (MisersHouseMain.playerLocation)
+            {
+                case 0:
+                    GameItem itemDoor = GameItem.FindItem("DOOR", roomItems);
+                    if (itemDoor != null && itemDoor.State.Equals(GameItem.ObjectState.VISIBLE)) //aka opened
+                    { specialText = "The door stands open, beckoning you!"; }
+                    break;
+                default:
+                    break;            
+            }
+            Console.WriteLine($" {specialText}");
+
             //Disclose Available Directions:
-            Console.WriteLine($"\n Obvious Exits: {buildCompassDirections(currentRoom.locationMap)}");
+            Console.WriteLine($"\n Obvious Exits: {BuildCompassDirections(currentRoom.locationMap)}");
         }
 
-        public string buildCompassDirections(int[] locationMap)
+        public string BuildCompassDirections(int[] locationMap)
         {
             //Compass Directions are standardized as North, South, East, West
             string[] possibleCompassLocations = {"N","S","E","W" };
@@ -144,7 +167,7 @@ namespace ReturnToTheMisersHouse
             return validCompassLocations.Remove(validCompassLocations.Length - 2);  //trim trailing comma and space.
         }
 
-
+        
         //Overrides:
         public override bool Equals(object obj)
         {

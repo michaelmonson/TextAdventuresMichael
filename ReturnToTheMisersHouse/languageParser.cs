@@ -278,7 +278,7 @@ namespace ReturnToTheMisersHouse
                 playerVerb == Verbs.E.ToString() || playerVerb == Verbs.EAST.ToString()  ||
                 playerVerb == Verbs.W.ToString() || playerVerb == Verbs.WEST.ToString())
             {
-                languageParser.CmdDirectionChange(playerLocation, currentRoom, playerVerb, roomItems);
+                changeRooms = languageParser.CmdDirectionChange(playerLocation, currentRoom, playerVerb, roomItems);
             }
 
 
@@ -581,7 +581,7 @@ namespace ReturnToTheMisersHouse
             {
                 Console.WriteLine("\n" + OracleInvalidDirection());
                 Console.WriteLine("\n    > Valid Directions: "
-                    + currentRoom.buildCompassDirections(currentRoom.locationMap));
+                    + currentRoom.BuildCompassDirections(currentRoom.locationMap));
             }
 
             return changeRooms;
@@ -736,6 +736,7 @@ namespace ReturnToTheMisersHouse
                     {
                         MisersHouseMain.WriteColorizedLine(ConsoleColor.Yellow, $"\n *** You found a brass {Nouns.KEY.ToString().ToLower()}! *** \n");
                         hiddenKey.State = GameItem.ObjectState.VISIBLE;
+                        MisersHouseMain.AddPlayerPoints(2);
                         somethingHappened = true;
                     }                    
                 }

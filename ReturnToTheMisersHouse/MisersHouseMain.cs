@@ -37,7 +37,7 @@ namespace ReturnToTheMisersHouse
         // ----------------------------------------------------------------------------------------------------
                 
             var misersHouse = new MisersHouseMain();
-            misersHouse.displayGameIntro();
+            misersHouse.DisplayGameIntro();
 
             //Instantiate RoomLocation class and populate actual Room Data:
             var roomLocation = new RoomLocation();
@@ -54,7 +54,7 @@ namespace ReturnToTheMisersHouse
             while (gameIsActive > 0)
             {
                 //Display Room data.
-                roomLocation.showRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
+                roomLocation.ShowRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
 
                 //Generate current room object list:
                 List<GameItem> roomItems = GameItem.GetRoomItems(MisersHouseMain.playerLocation);
@@ -78,12 +78,12 @@ namespace ReturnToTheMisersHouse
                 //...MORE CODE!  When ready to end, change the 'gameIsActive' code...
             }
 
-            misersHouse.displayGameEnding();
+            misersHouse.DisplayGameEnding();
 
 
         }
 
-        public void displayGameIntro()
+        public void DisplayGameIntro()
         {       
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\n");
@@ -146,7 +146,7 @@ namespace ReturnToTheMisersHouse
 
        
 
-        public void displayGameEnding()
+        public void DisplayGameEnding()
         {
             //TODO:  Display Score and complete game:
             Console.Write($"{ql} Thy game hast ended, {playerName}!");
@@ -204,6 +204,16 @@ namespace ReturnToTheMisersHouse
             Console.ForegroundColor = color;
             Console.Write(text);
             Console.ResetColor();
+        }
+
+
+        /*
+         * Add points to the player's score
+         */
+        public static void AddPlayerPoints(int newPoints)
+        {
+            MisersHouseMain misersHouseMain = new MisersHouseMain();
+            misersHouseMain.totalPoints += newPoints;
         }
 
 
