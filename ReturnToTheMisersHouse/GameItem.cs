@@ -88,8 +88,9 @@ namespace ReturnToTheMisersHouse
         public static List<GameItem> gameItems = new List<GameItem>
         {
             new GameItem (0, "MAT",        "old door mat",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, false, 8, 5),
-            new GameItem (0, "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, true, true, false, 1, 1 ),
-            new GameItem (0, "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED, new Dictionary<ObjectState, string> { }, false, false, false, 200, 100 )
+            new GameItem (0, "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN,  new Dictionary<ObjectState, string> { }, true, true, false, 1, 1 ),
+            new GameItem (0, "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED,  new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, false, false, false, 200, 100 ),
+            new GameItem (1, "DOOR_FRONT", "heavy wooden door", ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked once more."}, false, false, false, 200, 100 )   //The door is locked again on the Foyer side.
             //gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
             //gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
             //gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);

@@ -21,7 +21,7 @@ namespace ReturnToTheMisersHouse
             DROP, DUMP, BREAK, DESTROY,
             USE, MOVE, SLIDE, PUSH, OPEN, CLOSE, GIVE,
             POUR, FILL, UNLOCK, LOCK, MAKE, TURN, ROTATE,
-            I, INV, INVENTORY, QUIT, EXIT, SCORE, HELP, 
+            I, INV, INVENTORY, QUIT, EXIT, SCORE, POINTS, HELP, 
             LOOK, L, EXAMINE, PEER, FIND, READ, WATCH, THINK, FEEL, WHO,
             GO, NORTH, N, SOUTH, S, EAST, E, WEST, W, UP, DOWN, IN, OUT, LEAVE,    //SOME OF THESE ARE PREPOSITIONS!
             STAND, CROUCH, LIE, LAY, SIT, JUMP, LEAP, SWIM, CARTWHEEL, FIX, WORK,
@@ -128,7 +128,6 @@ namespace ReturnToTheMisersHouse
         {
             //Since a room change initiates a screen refresh, only change value when the player changes their location:
             bool changeRooms = false;
-            //var misersHouse = new MisersHouseMain();
             RoomLocation currentRoom = MisersHouseMain.roomLocations[playerLocation];
 
             //Analyze player input and gather an array of individual words. Doesn't handle punctuation.
@@ -329,6 +328,14 @@ namespace ReturnToTheMisersHouse
                 languageParser.CmdUnlock(noun, roomItems);
             }
 
+
+            /*
+             * ==> SCORE : Display the Players Score.
+             */
+            if (playerVerb == Verbs.SCORE.ToString() || playerVerb == Verbs.POINTS.ToString())
+            {
+                languageParser.CmdScore();
+            }
 
 
             //---------------------------------
@@ -535,9 +542,9 @@ namespace ReturnToTheMisersHouse
                     }
                 }
                 
-                if (currentRoom.locationMap[0] > 0)
+                if (currentRoom.LocationMap[0] > 0)
                 {
-                    MisersHouseMain.playerLocation = currentRoom.locationMap[0];
+                    MisersHouseMain.playerLocation = currentRoom.LocationMap[0];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -546,9 +553,9 @@ namespace ReturnToTheMisersHouse
 
             else if (directionVerb == Verbs.S.ToString() || directionVerb == Verbs.SOUTH.ToString())
             {
-                if (currentRoom.locationMap[1] > 0)
+                if (currentRoom.LocationMap[1] > 0)
                 {
-                    MisersHouseMain.playerLocation = currentRoom.locationMap[1];
+                    MisersHouseMain.playerLocation = currentRoom.LocationMap[1];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -557,9 +564,9 @@ namespace ReturnToTheMisersHouse
 
             else if (directionVerb == Verbs.E.ToString() || directionVerb == Verbs.EAST.ToString())
             {
-                if (currentRoom.locationMap[2] > 0)
+                if (currentRoom.LocationMap[2] > 0)
                 {
-                    MisersHouseMain.playerLocation = currentRoom.locationMap[2];
+                    MisersHouseMain.playerLocation = currentRoom.LocationMap[2];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -568,9 +575,9 @@ namespace ReturnToTheMisersHouse
 
             else if (directionVerb == Verbs.W.ToString() || directionVerb == Verbs.WEST.ToString())
             {
-                if (currentRoom.locationMap[3] > 0)
+                if (currentRoom.LocationMap[3] > 0)
                 {
-                    MisersHouseMain.playerLocation = currentRoom.locationMap[3];
+                    MisersHouseMain.playerLocation = currentRoom.LocationMap[3];
                     changeRooms = true;
                     validDirection = true;
                 }
@@ -579,9 +586,9 @@ namespace ReturnToTheMisersHouse
 
             if (!validDirection && directionCommand) //both must be checked
             {
-                Console.WriteLine("\n" + OracleInvalidDirection());
+                Console.WriteLine("\n " + OracleInvalidDirection());
                 Console.WriteLine("\n    > Valid Directions: "
-                    + currentRoom.BuildCompassDirections(currentRoom.locationMap));
+                    + currentRoom.BuildCompassDirections(currentRoom.LocationMap));
             }
 
             return changeRooms;
@@ -880,6 +887,18 @@ namespace ReturnToTheMisersHouse
         }
 
 
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> SCORE, POINTS:
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private void CmdScore()
+        {
+            Console.WriteLine($"\n If you quit your game now, your score will be {MisersHouseMain.GetPlayerPoints()} out of a possible {MisersHouseMain.totalGamePointsPossible} points.");
+        }
+
+
+
+
 
         //==================================|
         //     -------------------------      |
@@ -917,19 +936,17 @@ namespace ReturnToTheMisersHouse
                 {
                     if (playerLocation == 11)
                     {
-                        Console.WriteLine("You look through the available books, protect those that are about foxes (keep them safe) and you burn the rest!  Wha ha ha!  A maniacle grin matches the intensity of your eyes as the flames eagerly consume the dry books!");
+                        Console.WriteLine(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, "You look through the available books, protect those that are about foxes (keep them safe) and you burn the rest!  Wha ha ha!  A maniacle grin matches the intensity of your eyes as the flames eagerly consume the dry books!"));
                     }
                     else
                     {
                         Console.WriteLine("You look around, but cannot find any books to burn!");
                     }
-
                 }
             }
         }
 
 
+    }//END LanguageParser Class
 
-    }
-
-}
+}//END Name Space

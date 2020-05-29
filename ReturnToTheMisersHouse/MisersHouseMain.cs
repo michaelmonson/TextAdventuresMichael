@@ -12,7 +12,8 @@ namespace ReturnToTheMisersHouse
         public static string playerName = "Zork Adventurer";
         public string playerInput = "";
         public static int playerLocation = 0;
-        public int totalPoints = 0;
+        public static int totalGamePointsPossible = 2;
+        public int playerPoints = 0;
 
         //Standardize Formatting:
         public static int maxColumns = 112;
@@ -40,8 +41,9 @@ namespace ReturnToTheMisersHouse
             misersHouse.DisplayGameIntro();
 
             //Instantiate RoomLocation class and populate actual Room Data:
-            var roomLocation = new RoomLocation();
-            roomLocations = roomLocation.GenerateRoomData();
+            var roomLocationClass = new RoomLocation();
+            roomLocations = roomLocationClass.GenerateRoomData();
+            roomLocationClass.PopulateItemRoomEvents();
             
             //GameItems is a static object arry of items used throughout the game:
             //var gameItem = new GameItem();
@@ -54,7 +56,7 @@ namespace ReturnToTheMisersHouse
             while (gameIsActive > 0)
             {
                 //Display Room data.
-                roomLocation.ShowRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
+                roomLocationClass.ShowRoomInfo(roomLocations[MisersHouseMain.playerLocation]);
 
                 //Generate current room object list:
                 List<GameItem> roomItems = GameItem.GetRoomItems(MisersHouseMain.playerLocation);
@@ -150,7 +152,8 @@ namespace ReturnToTheMisersHouse
         {
             //TODO:  Display Score and complete game:
             Console.Write($"{ql} Thy game hast ended, {playerName}!");
-            Console.Write($"{dl} During thy journey this day, thou has amassed a total score of {totalPoints}.");
+            Console.Write($"{dl} During thy journey this day, thou has amassed a total score of {playerPoints}.");
+            //TODO:  Add in a "ranking" of scores, such as apprentace, Grand Adventurer (or if dealing with Star Trek, Lieutenant through Captain or even Admiral)
             Console.Write($"{ql}  Press any key to exit...\n\n\n");
             playerInput = Console.ReadLine();
         }
@@ -213,9 +216,17 @@ namespace ReturnToTheMisersHouse
         public static void AddPlayerPoints(int newPoints)
         {
             MisersHouseMain misersHouseMain = new MisersHouseMain();
-            misersHouseMain.totalPoints += newPoints;
+            misersHouseMain.playerPoints += newPoints;
         }
 
+        /*
+         * Get the player's current total points to the player's score
+         */
+        public static int GetPlayerPoints()
+        {
+            MisersHouseMain misersHouseMain = new MisersHouseMain();
+            return misersHouseMain.playerPoints;
+        }
 
 
         /*

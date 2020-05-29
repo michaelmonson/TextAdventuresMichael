@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 //-------------------------------------------------------------------------------------------------------
@@ -21,7 +22,14 @@ namespace ReturnToTheMisersHouse
         public string Name { get; set; }
         public string DescriptionShort { get; set; } //for allowing toggle between terse/verbose
         public string Description { get; set; }
-        public int[] locationMap = new int[4]; //TODO: Why is this set to '5' ?  Changing it to 4 (N,S,E,W)
+        public int[] LocationMap = new int[4]; //TODO: Why is this set to '5' ?  Changing it to 4 (N,S,E,W)
+
+        /* Special descriptions and events when certain items are brought into the room 
+         * or specific events that occur under unique circumstances.  A door slamming shut, for instance,
+         * or an organ that plays music when you have a special item with you.
+         * Perhaps a fire burns down the library, and the "burned" description is now added.  i.e. "charred walls are all that remain"
+         */
+        public Dictionary<string, string> ItemRoomEvents { get; set; } //Key is the Item; value is the description.
 
         //Special Locations:
         public static int LocInventory = -1;
@@ -40,7 +48,8 @@ namespace ReturnToTheMisersHouse
             Name = name;
             DescriptionShort = descriptionShort;
             Description = description;
-            this.locationMap = locationMap;
+            LocationMap = locationMap;
+            ItemRoomEvents = new Dictionary<string, string>();
         }
 
 
@@ -104,14 +113,34 @@ namespace ReturnToTheMisersHouse
             return roomLocations;
         }
 
+
         /*
-         * DISPLAY ROOM INFORMATION TO USER.  Clears screen each time this method is called.
-         */
+         * This data provides special events amd interactions between specific items and rooms, and the player's 
+         * interactions within those rooms with specific items adds extra depth and variety to the game.  
+         * There is so much detail that I wanted to add to create richness, that I wasn't sure how to proceed.  
+         * I knew that I couldn't simply make it a required property of each room, for some rooms will have 
+         * zero events, whereas other rooms might provide complex and rich interactions.
+         * 
+         * By using a dictionary in C# (roughly equivilant to a Java Map), it allows me to put in as few or
+         * as many key-value pairs.  The "key" is the item the player is carrying, and the "value" is the 
+         * description that is used to display extra information to the player.
+         * 
+         * I'll try this and see what I think, but it should work well.  At least until I find a better way!
+         * Rather than having a bunch of "if/else" or switch statements with multiple cases, it allows me
+         * to provide this information in a more efficient, consolidated manner.  We'll see if it works!  :-)
+         */ 
+        public void PopulateItemRoomEvents()
+        {
+            //Add special room-item interactions and events, for each room by its index.
+            MisersHouseMain.roomLocations[1].ItemRoomEvents.Add("DOOR_FRONT", "The door slams shut behind you!  You think you can hear maniacal laughter eminating from deep within the bowels of the house, and a draft of cold air blows past you, turning your blood to ice...");
+        }
+
+
+        /*
+            * DISPLAY ROOM INFORMATION TO USER.  Clears screen each time this method is called.
+            */
         public void ShowRoomInfo(RoomLocation currentRoom)
         {
-            //Access public Methods:
-            var misersHouse = new MisersHouseMain();
-
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"{dl} {currentRoom.Name}");
@@ -122,8 +151,20 @@ namespace ReturnToTheMisersHouse
                 currentRoom.DescriptionShort + "  " + currentRoom.Description);
             Console.WriteLine($"{sl}{formattedRoomDescription}");
 
-            //Describe any objects in the current room:
+            //Display any special object/room interactions or events:
             List<GameItem> roomItems = GameItem.GetRoomItems(MisersHouseMain.playerLocation);
+            foreach (GameItem item in roomItems)
+            {
+                if (currentRoom.ItemRoomEvents.TryGetValue(item.ItemId, out string eventDescription))
+                {
+                    if (item.State.Equals( GameItem.ObjectState.VISIBLE ))
+                    {
+                        Console.WriteLine(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, eventDescription));
+                    }
+                }
+            }            
+
+            //Describe any objects in the current room:            
             foreach (GameItem item in roomItems)
             {
                 if (item.State >= GameItem.ObjectState.VISIBLE )
@@ -132,24 +173,21 @@ namespace ReturnToTheMisersHouse
                 }                
             }
 
-            //Special Commands:
-            string specialText = "";
-            switch (MisersHouseMain.playerLocation)
-            {
-                case 0:
-                    GameItem itemDoor = GameItem.FindItem("DOOR", roomItems);
-                    if (itemDoor != null && itemDoor.State.Equals(GameItem.ObjectState.VISIBLE)) //aka opened
-                    { specialText = "The door stands open, beckoning you!"; }
-                    break;
-                default:
-                    break;            
+            //Display specialized descriptions:
+            string specialText = buildSpecialDescriptions(roomItems);            
+            if (specialText.Length > 0) 
+            { 
+                Console.WriteLine($" {specialText}"); 
             }
-            Console.WriteLine($" {specialText}");
 
             //Disclose Available Directions:
-            Console.WriteLine($"\n Obvious Exits: {BuildCompassDirections(currentRoom.locationMap)}");
+            Console.WriteLine($"\n Obvious Exits: {BuildCompassDirections(currentRoom.LocationMap)}");
         }
 
+
+        /*
+         * Helper method that generates a standardized set of compass directions for output to the player.
+         */ 
         public string BuildCompassDirections(int[] locationMap)
         {
             //Compass Directions are standardized as North, South, East, West
@@ -165,6 +203,34 @@ namespace ReturnToTheMisersHouse
             //return validCompassLocations.TrimEnd(',');  //Awesome! :-)  But I have to char's to nix!
             //return validCompassLocations.TrimEnd(validCompassLocations[validCompassLocations.Length - 1]);
             return validCompassLocations.Remove(validCompassLocations.Length - 2);  //trim trailing comma and space.
+        }
+
+        /*
+         * Special Descriptions to add to the richness of the narriative, and to give hints where appropriate:
+         */
+        private string buildSpecialDescriptions(List<GameItem> roomItems)
+        {            
+            string specialText = "";
+            switch (MisersHouseMain.playerLocation)
+            {
+                case 0:
+                    GameItem itemDoor = GameItem.FindItem("DOOR", roomItems);
+                    if (itemDoor != null && itemDoor.State.Equals(GameItem.ObjectState.VISIBLE)) //aka opened
+                    { specialText = "The door stands open, beckoning you!"; }
+                    break;
+                case 1:
+                    GameItem itemDoorFoyer = GameItem.FindItem("DOOR", roomItems);
+                    if (itemDoorFoyer != null && itemDoorFoyer.State.Equals(GameItem.ObjectState.VISIBLE)) //aka opened
+                    { itemDoorFoyer.State = GameItem.ObjectState.LOCKED; }
+                    else if (itemDoorFoyer != null && itemDoorFoyer.State.Equals(GameItem.ObjectState.LOCKED)) //aka opened
+                    {
+                        specialText = itemDoorFoyer.StateDescription[GameItem.ObjectState.LOCKED];
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return specialText;
         }
 
         
