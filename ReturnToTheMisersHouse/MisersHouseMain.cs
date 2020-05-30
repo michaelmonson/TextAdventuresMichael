@@ -13,7 +13,7 @@ namespace ReturnToTheMisersHouse
         public string playerInput = "";
         public static int playerLocation = 0;
         public static int totalGamePointsPossible = 2;
-        public int playerPoints = 0;
+        public static int playerPoints = 0;
 
         //Standardize Formatting:
         public static int maxColumns = 112;
@@ -215,8 +215,7 @@ namespace ReturnToTheMisersHouse
          */
         public static void AddPlayerPoints(int newPoints)
         {
-            MisersHouseMain misersHouseMain = new MisersHouseMain();
-            misersHouseMain.playerPoints += newPoints;
+            MisersHouseMain.playerPoints += newPoints;
         }
 
         /*
@@ -224,8 +223,7 @@ namespace ReturnToTheMisersHouse
          */
         public static int GetPlayerPoints()
         {
-            MisersHouseMain misersHouseMain = new MisersHouseMain();
-            return misersHouseMain.playerPoints;
+            return MisersHouseMain.playerPoints;
         }
 
 
