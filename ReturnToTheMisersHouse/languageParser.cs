@@ -14,6 +14,7 @@ namespace ReturnToTheMisersHouse
          * Annoying if used as a default anytime the language doesn't understand something..
          */
         public static string LastCommand { get; set; } = "";
+        public static int PlayerConfused = 0;  //Track player's number of invalid commands:
 
         public enum Verbs
         {
@@ -26,9 +27,31 @@ namespace ReturnToTheMisersHouse
             GO, NORTH, N, SOUTH, S, EAST, E, WEST, W, UP, DOWN, IN, OUT, LEAVE,    //SOME OF THESE ARE PREPOSITIONS!
             STAND, CROUCH, LIE, LAY, SIT, JUMP, LEAP, SWIM, CARTWHEEL, FIX, WORK,
             SAY, TELL, SPEAK, CALL, ASK, YELL, SHOUT, 
-            HUG, EMBRACE, KISS, BURN,
+            HUG, EMBRACE, KISS, BURN, LIGHT,
             HIT, SLUG, PUNCH, ATTACK, PINCH, POUND, SHOOT, TARGET, STRIKE,
+            /*
+             * Some verbs/commands have MULTIPLE meanings:
+             *    > 'LIGHT' means both lighting something on fire, as well as turning on a flashlight or lighting a room.
+             *    > GO, UP, DOWN  // these commands are being used in conjunction with 'LOOK'
+             */
         }
+        /* COMMANDS NOT YET IMPLEMENTED:
+         *   BREAK, DESTROY, USE, CLOSE, GIVE, POUR, FILL, LOCK, MAKE, TURN, ROTATE,
+         *   QUIT, EXIT, HELP, FIND, READ, WATCH, THINK, FEEL, KISS
+         *   STAND, CROUCH, LIE, LAY, SIT, JUMP, LEAP, SWIM, CARTWHEEL, FIX, WORK,
+         *   SAY, TELL, SPEAK, CALL, ASK, YELL, SHOUT, 
+         *   GO, UP, DOWN  // these commands are being used in conjunction with 'LOOK', so commands are more complex.
+         *   IN, OUT, LEAVE// IN and OUT will be reserved for special rooms, such as closets, large objects, etc.  
+         *      'LEAVE' should understand that the player wants to exit a room/location, but with multiple exits 
+         *          the game oracle may need to remember the last place.  But that's a lot of extra programming!
+         *          Although if it is simply an integer that gets set programmatically, it really isn't a big deal.
+         *          But it does allow the player a better experience, if they choose to use it.  Perhaps with 
+         *          multiple exits, it needs to prompt for a direction?  With just one exit, where to 'LEAVE' is clear.
+         *      'OUT' also needs to be overloaded to be either exiting a special room or object, as well as the same meaning as 'LEAVE.'
+         *   
+         *   HIT, SLUG, PUNCH, ATTACK, PINCH, POUND, SHOOT, TARGET, STRIKE
+         */
+
 
         /*
          * PREPOSITIONS :  A preposition is a word or set of words that indicates location 
@@ -182,6 +205,7 @@ namespace ReturnToTheMisersHouse
                 if (playerVerb.Length < 1)
                 {
                     Console.WriteLine("\n Please enter a command, such as a direction to move, or an action verb.");
+                    PlayerConfused++;
                     return false;
                 }
                 else
@@ -208,9 +232,12 @@ namespace ReturnToTheMisersHouse
             if (playerVerb.Length < 1)
             {
                 Console.WriteLine("\n" + OracleDoesNotUnderstand());
+                PlayerConfused++;                
                 return false;
+            } else
+            {
+                PlayerConfused = 0;  //Player's command is recognized. Reset confusion counter.
             }
-
 
 
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -266,7 +293,9 @@ namespace ReturnToTheMisersHouse
              *            talking, saying, speaking, telling
              */
             if (playerVerb == Verbs.WHO.ToString())
-               { languageParser.CmdWhoAreYou(noun); }
+            {
+                languageParser.CmdWhoAreYou(noun);
+            }
 
 
             /*
@@ -288,7 +317,7 @@ namespace ReturnToTheMisersHouse
                 || playerVerb == Verbs.ACQUIRE.ToString() || playerVerb == Verbs.OBTAIN.ToString()
                 || playerVerb == Verbs.PICK.ToString()) //'PICK UP' will be handled automatically
             {
-                languageParser.CmdGet(noun, roomItems);
+                changeRooms = languageParser.CmdGet(noun, roomItems);
             }
 
 
@@ -298,7 +327,7 @@ namespace ReturnToTheMisersHouse
             if (playerVerb == Verbs.MOVE.ToString() || playerVerb == Verbs.SLIDE.ToString()
                 || playerVerb == Verbs.PUSH.ToString()) 
             {
-                languageParser.CmdMove(noun, roomItems);
+                changeRooms = languageParser.CmdMove(noun, roomItems);
             }
 
 
@@ -307,7 +336,7 @@ namespace ReturnToTheMisersHouse
              */
             if (playerVerb == Verbs.DROP.ToString() || playerVerb == Verbs.DUMP.ToString())
             {
-                languageParser.CmdDrop(noun, playerLocation);
+                changeRooms = languageParser.CmdDrop(noun, playerLocation);
             }
 
 
@@ -316,7 +345,7 @@ namespace ReturnToTheMisersHouse
              */
             if (playerVerb == Verbs.OPEN.ToString())
             {
-                languageParser.CmdOpen(noun, roomItems);
+                changeRooms = languageParser.CmdOpen(noun, roomItems);
             }
 
 
@@ -325,7 +354,16 @@ namespace ReturnToTheMisersHouse
              */
             if (playerVerb == Verbs.UNLOCK.ToString())
             {
-                languageParser.CmdUnlock(noun, roomItems);
+                changeRooms = languageParser.CmdUnlock(noun, roomItems);
+            }
+
+
+            /*
+             * ==> HELP : The player didn't read the instructions!  Display them again!.
+             */
+            if (playerVerb == Verbs.HELP.ToString())
+            {
+                changeRooms = languageParser.CmdHelp();
             }
 
 
@@ -338,18 +376,27 @@ namespace ReturnToTheMisersHouse
             }
 
 
+            /*
+             * ==> QUIT, EXIT : This officially ends the game, and displays the payer's ranking.
+             */
+            if (playerVerb == Verbs.QUIT.ToString() || playerVerb == Verbs.EXIT.ToString())
+            {
+                changeRooms = languageParser.cmdQuit();
+            }
+
+
             //---------------------------------
             // OTHER MISCILANEOUS COMMANDS:
             //---------------------------------
 
             //HUGS MEAN LOVE!
-            if (playerVerb == Verbs.HUG.ToString())
+            if (playerVerb == Verbs.HUG.ToString() || playerVerb == Verbs.EMBRACE.ToString())
             {
                 languageParser.CmdHugs(noun, words);                
             }
 
             //PYROMANIAC LOGIC (BURN)!
-            if (playerVerb == Verbs.BURN.ToString())
+            if (playerVerb == Verbs.BURN.ToString() || playerVerb == Verbs.LIGHT.ToString())
             {
                 languageParser.CmdBurn(playerLocation, playerVerb, words);
             }
@@ -888,12 +935,35 @@ namespace ReturnToTheMisersHouse
 
 
         /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> HELP:
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private bool CmdHelp()
+        {
+            Console.Clear();
+            MisersHouseMain misersHouseMainClass = new MisersHouseMain();
+            misersHouseMainClass.DisplayHelpInfo();
+            return true;
+        }
+
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
          * ==> SCORE, POINTS:
          * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
          */
         private void CmdScore()
         {
             Console.WriteLine($"\n If you quit your game now, your score will be {MisersHouseMain.GetPlayerPoints()} out of a possible {MisersHouseMain.totalGamePointsPossible} points.");
+        }
+
+
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> QUIT, EXIT:  Thus ends the player's game!
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private bool cmdQuit()
+        {
+            MisersHouseMain.gameIsActive = 0;
+            return true;
         }
 
 

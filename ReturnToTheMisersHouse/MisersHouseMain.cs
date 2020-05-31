@@ -14,6 +14,7 @@ namespace ReturnToTheMisersHouse
         public static int playerLocation = 0;
         public static int totalGamePointsPossible = 2;
         public static int playerPoints = 0;
+        public static int gameIsActive = 1;
 
         //Standardize Formatting:
         public static int maxColumns = 112;
@@ -50,7 +51,7 @@ namespace ReturnToTheMisersHouse
             //gameItems = GameItem.GenerateGameObjectData();
             
 
-            int gameIsActive = 1;
+            //gameIsActive = 1;
 
             //Need to keep the game in a loop until it is ready to end.  Primative, but it works
             while (gameIsActive > 0)
@@ -65,7 +66,7 @@ namespace ReturnToTheMisersHouse
                 while (!refreshRoom)
                 {
 
-                    refreshRoom = false;
+                    //refreshRoom = false;
                     
                     //Get Player Input:
                     Console.Write($"{sl}   ? ");
@@ -73,19 +74,21 @@ namespace ReturnToTheMisersHouse
                     
                     //Player entered something... time to analyze!
                     refreshRoom = LanguageParser.AnalyzePlayerInput(misersHouse.playerInput, MisersHouseMain.playerLocation, roomItems);
+
+                    if (LanguageParser.PlayerConfused > 5)
+                    {
+                        Console.WriteLine(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, "\n You appear to be confused or frustrated.  None of your commands make any sense!  If you need help, please type: 'HELP' as a command!  I am here to serve you!"));
+                        LanguageParser.PlayerConfused = 0;
+                    }
                 }
 
-                
-
-                //...MORE CODE!  When ready to end, change the 'gameIsActive' code...
+                //...MORE CODE?  Not yet...  The "quit" command will change the 'gameIsActive' value;
             }
 
             misersHouse.DisplayGameEnding();
-
-
         }
 
-        public void DisplayGameIntro()
+        private void DisplayGameIntro()
         {       
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\n");
@@ -98,24 +101,8 @@ namespace ReturnToTheMisersHouse
             Console.WriteLine("\n\t\t\t\t\t     By Michael Monson ");
             Console.WriteLine("\n\t\t   Based on 'The Miser's House' by M.J. Lansing in 1981 - nearly 40 years ago!");
             Console.ResetColor();
-                        
-            Console.WriteLine("\n By playing this game, you are stepping back into time... to the golden age of text adventures!");
-            Console.WriteLine(FormatTextWidth(maxColumns, "\n A text adventure is \"interactive fiction!\"  It is played without a mouse, and all controls are done through the keyboard.   Text Adventures are executed through a console or command-line interface (DOS).  The only graphics and sound affects in this game are those that come from your imagination!"));
-            Console.WriteLine(" To play a text adventure, you must interact with the game by entering commands, usually a verb followed by a noun.");
-            Console.WriteLine("    * Type commands and see what happens!  Part of the joy is learning how to interact.  Use your imagination!");
-            Console.WriteLine("    * To move about, type the letter representing the compass direction you wish to go.");
-            Console.WriteLine("    * Or you can type the full direction name if you are verbose:  North(N), South(S), East(E), West(W)");
-            Console.WriteLine("    * Example of Commands (Verb/Noun): move mat, get treasure, drop brick, feed cat.");
-            Console.WriteLine("    * Pick up things by typing: get rope, get bucket, and eventually 'get all' and 'pick up' may be understood.");
-            Console.WriteLine("    * Drop objects in a similar fashion: drop rope, drop onion, etc.");
-            Console.WriteLine("    * Other important commands include: look, inventory(i), say, score");
-            Console.WriteLine("    * Many other words and commands are understood, but you'll have to discover 'em!");
-            Console.WriteLine("\n Many treasures can be found within the walls of the Miser's house.  May you find them all!");
-            Console.WriteLine(" Of course, a number of dangers will lurk, deep within the recesses of the Miser's house... beware!");
-            Console.WriteLine(" Try to escape from the house without losing your life! \n");
-                        
-            WriteColorizedLine(ConsoleColor.Cyan, "     > Press <ENTER> to begin thy adventure...");
-            var input = Console.ReadLine();
+
+            DisplayHelpInfo();
             Console.Clear();
 
             //Game is starting...
@@ -142,19 +129,46 @@ namespace ReturnToTheMisersHouse
             Console.WriteLine(FormatTextWidth(maxColumns, $"{dl} As you slowly walk up the cobblestone driveway, you notice that many of the autumn leaves have fallen from the trees that surround the house.  You glance around at the grounds that must have been stately and well groomed at one time.  Clearly that was years ago, for most of the trees are now overgrown and a couple are encroaching upon the large house."));
             Console.WriteLine(FormatTextWidth(maxColumns, " The glass in many of the windows is warped, showing their great age.  Several of the windows have cracks in them.  One attic window, high above the porch, is of beautiful stained glass.  Clearly this home was built with pride and great skill, at a time where the architects and masons knew their craft well."));
 
-            WriteColorizedLine(ConsoleColor.Cyan, "   > Press enter to continue:");
-            input = Console.ReadLine();
+            WriteColorizedLine(ConsoleColor.Cyan, "   > Press a key to continue:");
+            Console.ReadKey();
         }
 
-       
 
-        public void DisplayGameEnding()
+        public void DisplayHelpInfo()
+        {
+            Console.WriteLine("\n By playing this game, you are stepping back into time... to the golden age of text adventures!");
+            Console.WriteLine(FormatTextWidth(maxColumns, "\n A text adventure is \"interactive fiction!\"  It is played without a mouse, and all controls are done through the keyboard.   Text Adventures are executed through a console or command-line interface (DOS).  The only graphics and sound affects in this game are those that come from your imagination!"));
+            Console.WriteLine(" To play a text adventure, you must interact with the game by entering commands, usually a verb followed by a noun.");
+            Console.WriteLine("    * Type commands and see what happens!  Part of the joy is learning how to interact.  Use your imagination!");
+            Console.WriteLine("    * To move about, type the letter representing the compass direction you wish to go.");
+            Console.WriteLine("    * Or you can type the full direction name if you are verbose:  North(N), South(S), East(E), West(W)");
+            Console.WriteLine("    * Example of Commands (Verb/Noun): move mat, get treasure, drop brick, feed cat.");
+            Console.WriteLine("    * Pick up things by typing: get rope, get bucket, and eventually 'get all' and 'pick up' may be understood.");
+            Console.WriteLine("    * Drop objects in a similar fashion: drop rope, drop onion, etc.");
+            Console.WriteLine("    * Other important commands include: look, inventory(i), say, score");
+            Console.WriteLine("    * Many other words and commands are understood, but you'll have to discover 'em!");
+            Console.WriteLine("\n Many treasures can be found within the walls of the Miser's house.  May you find them all!");
+            Console.WriteLine(" Of course, a number of dangers will lurk, deep within the recesses of the Miser's house... beware!");
+            Console.WriteLine(" Try to escape from the house without losing your life! \n");
+
+            WriteColorizedLine(ConsoleColor.Cyan, "     > Press <ENTER> to begin thy adventure...");
+            Console.ReadLine();
+        }
+              
+
+        private void DisplayGameEnding()
         {
             //TODO:  Display Score and complete game:
-            Console.Write($"{ql} Thy game hast ended, {playerName}!");
-            Console.Write($"{dl} During thy journey this day, thou has amassed a total score of {playerPoints}.");
+            WriteColorizedLine(ConsoleColor.Cyan, $"{ql} Thy game hast ended, {playerName}!");
+            WriteColorizedLine(ConsoleColor.Yellow, $"{dl} During thy journey this day, thou has amassed a total score of [ {playerPoints} ].");
+            WriteColorizedLine(ConsoleColor.Yellow, $"{dl} Had you surived your quest and collected all treasure, a total score of [ {totalGamePointsPossible} ] is possible.");
+
             //TODO:  Add in a "ranking" of scores, such as apprentace, Grand Adventurer (or if dealing with Star Trek, Lieutenant through Captain or even Admiral)
-            Console.Write($"{ql}  Press any key to exit...\n\n\n");
+            var ranking = playerPoints / totalGamePointsPossible;
+            
+            WriteColorizedLine(ConsoleColor.Yellow, $"{dl}    RANK ►  {totalGamePointsPossible} ] is possible.");
+
+            Console.Write($"{dl}  Press any key to exit...\n\n\n");
             playerInput = Console.ReadLine();
         }
 
@@ -217,6 +231,7 @@ namespace ReturnToTheMisersHouse
         {
             MisersHouseMain.playerPoints += newPoints;
         }
+
 
         /*
          * Get the player's current total points to the player's score
