@@ -8,6 +8,17 @@ namespace ReturnToTheMisersHouse
     class GameItem
     {
 
+        //TODO:  Create some matrix / dictionaries for reference when trying to do specific things
+        //       such as eating items.  So, have a "FOOD" matrix, where
+        //       Alternatively, classify objects with an enumeration on general purposes of 
+        //       the device.  Example:  FOOD, TOOL, TREASURE, etc.
+        //       Creating things like this allow for more intelligatn interactions, as well as 
+        //       reducing the amount of spurious logic and checks.  Having lists of items that
+        //       are classified in matrixes with specific responses for different scenarios,
+        //       as well as generic responses, cleverly chosen, when items do not match,
+        //       allow for generic responses most of the time.
+        //       The flexiility I have in a modern programming language allows for so much!
+
         public int LocationIndex { get; set; }  //Location that the object first appears
         public string ItemId { get; set; }      //Unique alphanumeric CONSTANT that is an ID for the item
         public string Name { get; set; }        //Item Name
@@ -16,6 +27,7 @@ namespace ReturnToTheMisersHouse
         public bool Movable { get; set; }       //Item can be moved, but not taken
         public bool Luggable { get; set; }      //Item can be taken
         public bool Lockable { get; set; }      //Item can be locked
+        public bool Breakable { get; set; }     //Item can be broken or damaged under normal circumstances; denotes whether the item is impervious to damage.
         public int Weight { get; set; }         //Max: 50 pounds. Impacts how much the player can carry.
         public int Size { get; set; }           //Max: 20 size units (arbitrary). Large, cumbersome loads are difficult.
 
@@ -25,7 +37,7 @@ namespace ReturnToTheMisersHouse
 
         public GameItem(int locationIndex, string itemId, string name,
                     ObjectState state, Dictionary<ObjectState, string> stateDescription,
-                    bool movable, bool luggable, bool lockable, int weight, int size)
+                    bool movable, bool luggable, bool lockable, bool breakable, int weight, int size)
         {
             LocationIndex = locationIndex;
             ItemId = itemId;
@@ -35,6 +47,7 @@ namespace ReturnToTheMisersHouse
             Movable = movable;
             Luggable = luggable;
             Lockable = lockable;
+            Breakable = breakable;
             Weight = weight;
             Size = size;
         }
@@ -87,10 +100,10 @@ namespace ReturnToTheMisersHouse
 
         public static List<GameItem> gameItems = new List<GameItem>
         {
-            new GameItem (0, "MAT",        "old door mat",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, false, 8, 5),
-            new GameItem (0, "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN,  new Dictionary<ObjectState, string> { }, true, true, false, 1, 1 ),
-            new GameItem (0, "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED,  new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, false, false, false, 200, 100 ),
-            new GameItem (1, "DOOR_FRONT", "heavy wooden door", ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked once more."}, false, false, false, 200, 100 )   //The door is locked again on the Foyer side.
+            new GameItem (0, "MAT",        "old door mat",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, false, true, 8, 5),
+            new GameItem (0, "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN,  new Dictionary<ObjectState, string> { }, true, true, false, false, 1, 1 ),
+            new GameItem (0, "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED,  new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, false, false, false, false, 200, 100 ),
+            new GameItem (1, "DOOR_FRONT", "heavy wooden door", ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked once more."}, false, false, false, false, 200, 100 )   //The door is locked again on the Foyer side.
             //gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
             //gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
             //gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);

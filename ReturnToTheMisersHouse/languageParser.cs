@@ -36,8 +36,8 @@ namespace ReturnToTheMisersHouse
              */
         }
         /* COMMANDS NOT YET IMPLEMENTED:
-         *   BREAK, DESTROY, USE, CLOSE, GIVE, POUR, FILL, LOCK, MAKE, TURN, ROTATE,
-         *   QUIT, EXIT, HELP, FIND, READ, WATCH, THINK, FEEL, KISS
+         *   USE, CLOSE, GIVE, POUR, FILL, LOCK, MAKE, TURN, ROTATE,
+         *   FIND, READ, WATCH, THINK, FEEL, KISS
          *   STAND, CROUCH, LIE, LAY, SIT, JUMP, LEAP, SWIM, CARTWHEEL, FIX, WORK,
          *   SAY, TELL, SPEAK, CALL, ASK, YELL, SHOUT, 
          *   GO, UP, DOWN  // these commands are being used in conjunction with 'LOOK', so commands are more complex.
@@ -388,6 +388,19 @@ namespace ReturnToTheMisersHouse
             //---------------------------------
             // OTHER MISCILANEOUS COMMANDS:
             //---------------------------------
+
+
+            //Break something!
+            if (playerVerb == Verbs.BREAK.ToString() || playerVerb == Verbs.DESTROY.ToString())
+            {
+                changeRooms = languageParser.CmdBreak(noun, playerLocation);
+            }
+
+            //JUMP!  Only useful in certain rooms, but some default fun for the player!
+            if (playerInput == Verbs.JUMP.ToString() || playerInput == Verbs.JUMP.ToString())
+            {
+                changeRooms = languageParser.CmdJump();
+            }
 
             //HUGS MEAN LOVE!
             if (playerVerb == Verbs.HUG.ToString() || playerVerb == Verbs.EMBRACE.ToString())
@@ -935,7 +948,7 @@ namespace ReturnToTheMisersHouse
 
 
         /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-         * ==> HELP:
+         * ==> HELP: The Game Oracle regurgitates the original instructions
          * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
          */
         private bool CmdHelp()
@@ -945,6 +958,7 @@ namespace ReturnToTheMisersHouse
             misersHouseMainClass.DisplayHelpInfo();
             return true;
         }
+
 
         /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
          * ==> SCORE, POINTS:
@@ -975,6 +989,95 @@ namespace ReturnToTheMisersHouse
         //   < OTHER MISCILANEOUS COMMANDS >    |
         //     -------------------------      |
         //==================================|
+
+
+        private bool CmdBreak(string noun, int playerLocation)
+        {
+            while (noun.Length == 0)
+            {
+                Console.Write("\n What do you seek to destroy? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                var item = GameItem.gameItems.Find(item => item.ItemId.Contains(noun));
+                if (item != null)
+                {
+                    if (item.State.Equals(GameItem.ObjectState.INVENTORY))
+                    {
+                        Console.WriteLine($" You take the {item.Name} out of your pack...");
+                        //Remove from player inventory:
+                        item.LocationIndex = playerLocation;
+                        item.State = GameItem.ObjectState.VISIBLE;
+                    }
+
+                    //Need to check that it exists in the room:
+                    if (item.LocationIndex.Equals(playerLocation) && item.State > 0)
+                    {
+                        /* TODO: Consider a matrix of resopnses for breaking certain items.
+                            * Some things cannot be broken.
+                            * Also, make sure to protect certain items (such as treasures) against breakage.
+                            */
+                        if (item.State.Equals(GameItem.ObjectState.DAMAGED))
+                        {
+                            Console.WriteLine($"\n The {item.Name} is already damaged.");
+                        }
+                        else
+                        {
+                            string oracleResponse = item.ItemId switch
+                            {
+                                "KEY_BRASS"    => $" You bang the {item.Name} against something hard several times, but it is well crafted and does not bend or break.",
+                                "MAT"          => $" It takes some time, but after significant straining, you successfully rip the {noun} in half!",
+                                "DOOR_FRONT"   => $" You can't break the {noun}!  It's made of solid wood with reinforced steel!",
+                                "MANGO_FOOD"   => $" You toss the {item.Name} in the air a couple of times to guage it's weight, and then throw it hard against the wall!  What is left of it slowly oozes to the floor.",
+                                "FLASHLIGHT"   => $" What a foolish thing to break!  Still, like a creature possessed, you slam the {noun} against the floor until the lens snaps off and the batteries fall out of the mangled cylinder!",
+                                "WATER_BOTTLE" => $" Are you serious?!  You may need your water!  I cannot let you destroy your source of hydration!",
+                                _ => $" You successfully obliterate the '{noun}'."
+                            };
+                            Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, oracleResponse));
+
+                            if (item.Breakable)
+                            {
+                                item.State = GameItem.ObjectState.DAMAGED;
+                            }
+                        }                        
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n You look around you, but the {noun.ToLower()} cannot be found here.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\n I do not believe that the {noun.ToLower()} exists in this game.  Try something else!");
+                }
+            }
+
+            return false;
+        }
+
+
+        private bool CmdJump()
+        {
+            Random rnd = new Random();
+            int randomResponse = rnd.Next(1, 9);            
+            string oracleResponse = randomResponse switch
+            {
+                1 => " Are you enjoying yourself?",
+                2 => " Wheeeeeeeee!!!",
+                3 => " Do you expect me to applaud?",
+                4 => " Glad to see that you are enjoying some athletic frivolity!",
+                5 => " You jump and leap into the air a few times... you feel better!",
+                6 => " That would be a pointless thing to do!",
+                7 => " That would be a useless effort.",
+                8 => " Wouldn't that be a waste of time?",
+                _ => " Houston, we have a problem!  Invalid Case!"
+            };
+            Console.WriteLine(oracleResponse);
+            return false;
+        }
 
 
         private void CmdHugs(string noun, string[] words)
