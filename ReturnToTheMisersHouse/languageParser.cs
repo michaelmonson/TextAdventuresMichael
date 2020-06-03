@@ -154,7 +154,7 @@ namespace ReturnToTheMisersHouse
             RoomLocation currentRoom = MisersHouseMain.roomLocations[playerLocation];
 
             //Analyze player input and gather an array of individual words. Doesn't handle punctuation.
-            playerInput = Regex.Replace(playerInput, @"[^\w\d\s]", "");   //Remove punctuation marks
+            playerInput = Regex.Replace(playerInput.Trim(), @"[^\w\d\s]", "");   //Remove punctuation marks
             string[] words = playerInput.Split(' ');
             if (words.Length > 4) 
             {
@@ -277,13 +277,16 @@ namespace ReturnToTheMisersHouse
 
 
             /*
-             * ==> LOOK! : Displays information about their surroundings.  Also to "look" or examine an object more closely.
+             * ==> LOOK! : Displays information about their surroundings.  
+             *             Also used to "look" or examine an object more closely.
+             *             At some point, I may even introduce the concept of "IDENTIFY" 
+             *             for which you need special skills or items to determine an item's ability.
              */
             if (playerVerb == Verbs.LOOK.ToString() || playerVerb == Verbs.L.ToString() 
                 || playerVerb == Verbs.PEER.ToString()
                 || playerVerb == Verbs.EXAMINE.ToString() )
             {
-                changeRooms = languageParser.CmdLook(words, playerVerb, noun);
+                changeRooms = languageParser.CmdLook(words, playerVerb, noun, roomItems);
             }
 
 
@@ -499,45 +502,79 @@ namespace ReturnToTheMisersHouse
          * ==> LOOK!
          * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
          */
-        private bool CmdLook(string[] words, String playerVerb, String noun) //TODO: Replace noun and playerVerb with a collection or Dictionary of words and their type.
+        //TODO: Replace noun and playerVerb with a collection or Dictionary of words and their type.
+        private bool CmdLook(string[] words, String playerVerb, String noun, List<GameItem> roomItems) 
         {
             bool refreshScreen = false;
                 
-                //Player just wants to look around generally:
-                if (words.Length == 1 && playerVerb != Verbs.EXAMINE.ToString())
+            //Player just wants to look around generally:
+            if (words.Length == 1 && playerVerb != Verbs.EXAMINE.ToString())
+            {
+                refreshScreen = true;  //One of the most common commands in the game.  A current "view" of their location.
+            }
+            else if (noun == "AROUND")
+            {
+                Console.Write("\n You look around your surroundings for a few moments...");
+                var input = Console.ReadKey();
+            }
+            else if (noun == "UP" || noun == "ABOVE" || noun == "DOWN" || noun == "BELOW")
+            {
+                Console.WriteLine($"\n You look {words[1].ToLower()} but see nothing of interest.");
+            }
+            else
+            {
+                //All other logic goes here...  prepositions should have been dropped previously, and check for other cases.                   
+                //TODO: ADD LOGIC TO LOOK AT THINGS IN THE ROOM OR IN YOUR INVENTORY
+                if (noun.Length > 0)
                 {
-                    refreshScreen = true;  //One of the most common commands in the game.  A current "view" of their location.
-                }
-                else if (words[1] == "AROUND")
-                {
-                    Console.Write("\n You look around your surroundings for a few moments...");
-                    var input = Console.ReadKey();
-} 
-                else if (words[1] == "UP" || words[1] == "ABOVE" || words[1] == "DOWN" || words[1] == "BELOW")
-                {
-                    Console.WriteLine($"\n You look {words[1].ToLower()} but see nothing of interest.");
+
+                    if (noun.Equals("ME") || noun.Equals("MYSELF"))
+                    {
+                        Console.WriteLine("\n You look down at yourself and recognize you!  Strangely, you are wearing an orange shirt that says, \"Camp Half-Blood\" ");
+                        return refreshScreen;
+                    }
+
+                    if (noun.Equals("YOU"))
+                    {
+                        Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, "\n You look at me... the oracle of this game.  But how did you do that?  I am the oracle of the game, yet you seem to see me through a strange mist that appeared in front of you..."));
+                        return refreshScreen;
+                    }
+                    
+                    var item = roomItems.Find(item => item.ItemId.Contains(noun));
+                    string description = "";
+                    if (item != null && item.State > 0)
+                    {
+                        Console.WriteLine($"\n You take a closer look at the {item.Name}...");
+                        item.StateDescription.TryGetValue(item.State, out description);
+                    }
+                    else if (Inventory.ContainsItem(noun.ToUpper()))
+                    {
+                        item = GameItem.gameItems.Find(item => item.ItemId.Contains(noun));
+                        Console.WriteLine($"\n You take the {item.Name} out of your pack and examine it closely...");
+                        item.StateDescription.TryGetValue(GameItem.ObjectState.VISIBLE, out string itemDescription); //Manually passing the key as "VISIBLE" since the "INVENTORY" state doesn't have a description.
+                        description = itemDescription + "    (you return it to your pack.)";
+                    }
+                    else
+                    {
+                        description = "You look around you, but the " + noun.ToLower() + " cannot be found here.";
+                    }
+                    if (description != null && description.Length > 0)
+                    {
+                        Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, $"\n {description}"));
+                    } 
+                    else
+                    {
+                        Console.WriteLine(" You notice nothing of importance.");
+                    }              
                 }
                 else
                 {
-                    //All other logic goes here...  prepositions should have been dropped previously, and check for other cases.
-                    
-                    if (noun.Equals("ME") || noun.Equals("MYSELF") )
-                    {
-                        Console.WriteLine("\n You look down at yourself and recognize you!  Strangely, you are wearing an orange shirt that says, \"Camp Half-Blood\" ");
-                    } 
-                    else if (noun.Equals("YOU"))
-                    {
-                        Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, "\n You look at me... the oracle of this game.  But how did you do that?  I am the oracle of the game, yet you seem to see me through a strange mist that appeared in front of you..."));
-                    }
-                    //ADD LOGIC TO LOOK AT THINGS IN THE ROOM< OR IN YOUR INVENTORY
-                    else
-                    {
-                        Console.WriteLine("\n You can't find that here.");
-                    }
-
+                    Console.WriteLine("\n You cannot see that here.");
                 }
 
-                return refreshScreen;
+            }
+
+            return refreshScreen;
         }
 
 
@@ -685,47 +722,64 @@ namespace ReturnToTheMisersHouse
                 {
                     foreach(GameItem checkItem in roomItems)
                     {
-                        if (checkItem.Luggable && (int)checkItem.State > 0)
+                        bool validateItem = ValidateGetItem(checkItem, noun, true);
+                        if (validateItem) //item may be too heavy, or damaged.
                         {
                             checkItem.LocationIndex = RoomLocation.LocInventory;
                             checkItem.State = (int)GameItem.ObjectState.INVENTORY;
-                            Console.WriteLine($" Taken: {checkItem.Name.ToLower()}");
+                            Console.WriteLine($" Taken: {checkItem.Name}");
                             CmdGetMoveSpecial(checkItem.ItemId, roomItems);
                         }
                     }
                     return false;
                 }
 
-
-                /*
-                 * Generic check for object in room:
-                 *   - Also ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
-                 */
+                //Validate that a specific item can be acquired by the player:
                 GameItem item = GameItem.FindItem(noun, roomItems);
-                if (item == null || (int)item.State < 1)
+                bool validateItems = ValidateGetItem(item, noun, false);
+                if (validateItems) //item may be too heavy, or damaged.
+                {
+                    //Repeated code... ack!
+                    item.LocationIndex = RoomLocation.LocInventory;
+                    item.State = GameItem.ObjectState.INVENTORY;
+                    Console.WriteLine($"\n Taken: {noun.ToLower()}");
+                    CmdGetMoveSpecial(noun, roomItems);
+                }
+            }
+            return false;
+        }
+
+        /*
+         * Validate whether an item can be picked up by the player.
+         *   - Ensures that "hidden" items (especially when supporting "get/take all") cannot be taken before discovered.
+         *   - Limits player to items that are light enough to carry.
+         *   - Damaged items cannot be carried at this time.
+         */
+        private bool ValidateGetItem(GameItem checkItem, string noun, bool takeAll)
+        {
+            bool validateSuccess = false;
+            //Add a null check?
+            if (!checkItem.Luggable)
+            {
+                Console.WriteLine($" You valiantly attempt to take the {checkItem.Name}, but you are unsuccessful. it is too heavy to carry.");
+            }
+            else if ((int)checkItem.State < 1)
+            {
+                // Only disclose this message to the player when they explicitly requested to get a specific item; otherwise we could be giving away hidden objects!
+                if (!takeAll)
                 {
                     Console.WriteLine($"\n You are unable to find the {noun.ToLower()}");
-                    return false;
-                }
-                else
-                {
-                    if (item.Luggable)
-                    {
-                        item.LocationIndex = RoomLocation.LocInventory;
-                        item.State = GameItem.ObjectState.INVENTORY;
-                        Console.WriteLine($"\n Taken: {noun.ToLower()}");
-                        CmdGetMoveSpecial(noun, roomItems);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"\n You valiantly attempt to take the {item.Name}, but you are unsuccessful.");
-                    }
-
-                }
-                
+                }                
             }
-
-            return false;
+            else if (checkItem.State.Equals(GameItem.ObjectState.DAMAGED))
+            {
+                Console.WriteLine($" The {checkItem.Name} cannot be carried in its damaged state.");
+            }
+            else
+            {
+                validateSuccess = true;
+            }
+            return validateSuccess;
         }
 
 
@@ -1028,15 +1082,15 @@ namespace ReturnToTheMisersHouse
                         {
                             string oracleResponse = item.ItemId switch
                             {
-                                "KEY_BRASS"    => $" You bang the {item.Name} against something hard several times, but it is well crafted and does not bend or break.",
-                                "MAT"          => $" It takes some time, but after significant straining, you successfully rip the {noun} in half!",
-                                "DOOR_FRONT"   => $" You can't break the {noun}!  It's made of solid wood with reinforced steel!",
-                                "MANGO_FOOD"   => $" You toss the {item.Name} in the air a couple of times to guage it's weight, and then throw it hard against the wall!  What is left of it slowly oozes to the floor.",
-                                "FLASHLIGHT"   => $" What a foolish thing to break!  Still, like a creature possessed, you slam the {noun} against the floor until the lens snaps off and the batteries fall out of the mangled cylinder!",
-                                "WATER_BOTTLE" => $" Are you serious?!  You may need your water!  I cannot let you destroy your source of hydration!",
-                                _ => $" You successfully obliterate the '{noun}'."
+                                "KEY_BRASS"    => $"You bang the {item.Name} against something hard several times, but it is well crafted and does not bend or break.",
+                                "MAT"          => $"It takes some time, but after significant straining, you successfully rip the {noun.ToLower()} in half!",
+                                "DOOR_FRONT"   => $"You can't break the {noun.ToLower()}!  It's made of solid wood with reinforced steel!",
+                                "MANGO_FOOD"   => $"You toss the {item.Name} in the air a couple of times to guage it's weight, and then throw it hard against the wall!  What is left of it slowly oozes to the floor.",
+                                "FLASHLIGHT"   => $"What a foolish thing to break!  Still, like a creature possessed, you slam the {noun.ToLower()} against the floor until the lens snaps off and the batteries fall out of the mangled cylinder!",
+                                "WATER_BOTTLE" => $"Are you serious?!  You may need your water!  I cannot let you destroy your source of hydration!",
+                                _ => $" You successfully obliterate the '{noun.ToLower()}'."
                             };
-                            Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, oracleResponse));
+                            Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, $"\n {oracleResponse}"));
 
                             if (item.Breakable)
                             {

@@ -28,9 +28,9 @@ namespace ReturnToTheMisersHouse
 
         public static void InitializeInventory()
         {
-            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "MANGO_FOOD",   "juicy mango",        GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "this delectable fruit has the power to restore strength to the weak!" }, true, true, false, true, 1, 1));
-            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "FLASHLIGHT",   "small LED flashlight", GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "a small, but bright, LED flashlight" }, true, true, true, true, 3, 2));
-            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle",         GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "a cheap, plastic water bottle" }, true, true, false, false, 2, 2));
+            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "MANGO_FOOD",   "juicy mango",        GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "This delectable fruit has the power to restore strength to the weak!" }, true, true, false, true, 1, 1));
+            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "FLASHLIGHT",   "small LED flashlight", GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "A small, but bright, LED flashlight" }, true, true, true, true, 3, 2));
+            GameItem.gameItems.Add(new GameItem(RoomLocation.LocInventory, "WATER_BOTTLE", "water bottle",         GameItem.ObjectState.INVENTORY, new Dictionary<GameItem.ObjectState, string> { [GameItem.ObjectState.VISIBLE] = "A cheap, plastic water bottle" }, true, true, false, false, 2, 2));
         }
 
         //-------------------------------------------------------------------------------------------------------
