@@ -36,9 +36,9 @@ namespace ReturnToTheMisersHouse
              */
         }
         /* COMMANDS NOT YET IMPLEMENTED:
-         *   USE, CLOSE, GIVE, POUR, FILL, LOCK, MAKE, TURN, ROTATE,
+         *   USE, CLOSE, GIVE, POUR, FILL,  
          *   FIND, READ, WATCH, THINK, FEEL, KISS
-         *   STAND, CROUCH, LIE, LAY, SIT, JUMP, LEAP, SWIM, CARTWHEEL, FIX, WORK,
+         *   STAND, CROUCH, LIE, LAY, SIT, SWIM, CARTWHEEL, FIX, WORK,
          *   SAY, TELL, SPEAK, CALL, ASK, YELL, SHOUT, 
          *   GO, UP, DOWN  // these commands are being used in conjunction with 'LOOK', so commands are more complex.
          *   IN, OUT, LEAVE// IN and OUT will be reserved for special rooms, such as closets, large objects, etc.  
@@ -362,6 +362,24 @@ namespace ReturnToTheMisersHouse
 
 
             /*
+             * ==> LOCK : If an item can be unlocked, the player can lock it again I suppose...
+             */
+            if (playerVerb == Verbs.LOCK.ToString())
+            {
+                changeRooms = languageParser.CmdLock(noun, roomItems);
+            }
+
+
+            /*
+             * ==> TURN , ROTATE : To everything (turn, turn, turn!) There is a season! (turn, turn, turn!)
+             */
+            if (playerVerb == Verbs.TURN.ToString() || playerVerb == Verbs.ROTATE.ToString())
+            {
+                changeRooms = languageParser.CmdTurn(noun, playerVerb, roomItems);
+            }
+
+
+            /*
              * ==> HELP : The player didn't read the instructions!  Display them again!.
              */
             if (playerVerb == Verbs.HELP.ToString())
@@ -400,9 +418,15 @@ namespace ReturnToTheMisersHouse
             }
 
             //JUMP!  Only useful in certain rooms, but some default fun for the player!
-            if (playerInput == Verbs.JUMP.ToString() || playerInput == Verbs.JUMP.ToString())
+            if (playerInput == Verbs.JUMP.ToString() || playerInput == Verbs.LEAP.ToString())
             {
                 changeRooms = languageParser.CmdJump();
+            }
+
+            //SWIM!  Like other actions, swimming is ineffective in most rooms.
+            if (playerInput == Verbs.SWIM.ToString())
+            {
+                changeRooms = languageParser.CmdSwim(playerLocation);
             }
 
             //HUGS MEAN LOVE!
@@ -837,12 +861,12 @@ namespace ReturnToTheMisersHouse
 
 
         /*
-            * For special items, when getting or moving it reveals a special item.
-            * Any special object logic should be placed here specifically, so as to only 
-            * called the logic once, especially where "MOVE" and "GET" can both reveal the same thing.
-            * Also, the "GET ALL" command follows an itterative sequence, which was skipping this
-            * logic, and I really didn't want to repeat it more than once! ;-)
-            */
+         * For special items, when getting or moving it reveals a special item.
+         * Any special object logic should be placed here specifically, so as to only 
+         * called the logic once, especially where "MOVE" and "GET" can both reveal the same thing.
+         * Also, the "GET ALL" command follows an itterative sequence, which was skipping this
+         * logic, and I really didn't want to repeat it more than once! ;-)
+         */
         private bool CmdGetMoveSpecial(string noun, List<GameItem> roomItems)
         {
             bool somethingHappened = false;
@@ -867,9 +891,9 @@ namespace ReturnToTheMisersHouse
 
 
         /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-        * ==> DROP:
-        * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-        */
+         * ==> DROP:
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
         private bool CmdDrop(string noun, int playerLocation)
         {
             if (Inventory.isEmpty())
@@ -950,10 +974,10 @@ namespace ReturnToTheMisersHouse
         }
 
 
-      /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-       * ==> UNLOCK:
-       * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
-       */
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         *  ==> UNLOCK: 
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
         private bool CmdUnlock(string noun, List<GameItem> roomItems)
         {
             while (noun.Length == 0)
@@ -970,9 +994,15 @@ namespace ReturnToTheMisersHouse
 
                 if (item == null)
                 {
+                    // Check Inventory for an item to turn:
+                    item = GameItem.FindItem(noun, GameItem.gameItems);
+                }
+                if (item == null)
+                {
                     Console.WriteLine($"\n The {noun.ToLower()} cannot be found.");
                     return false;
                 }
+
                 if (item.State.Equals(GameItem.ObjectState.LOCKED))
                 {
                     if (Inventory.ContainsItem("KEY"))
@@ -995,10 +1025,135 @@ namespace ReturnToTheMisersHouse
                     item.State = GameItem.ObjectState.VISIBLE;
                     return false;
                 }
+                else
+                {
+                    Console.WriteLine($"\n The {item.Name} cannot be unlocked.");
+                }
 
             }
             return false;
         }
+
+
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> LOCK: Not sure why you would want to lock something, but we ought to 
+         *           support it if the player can UNLOCK an item.
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private bool CmdLock(string noun, List<GameItem> roomItems)
+        {
+            while (noun.Length == 0)
+            {
+                Console.Write("\n What doth thou wish to lock? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                //Validate unlocked state:
+                GameItem item = GameItem.FindItem(noun, roomItems);
+
+                if (item == null)
+                {
+                    //Check Inventory for an item to turn:
+                    item = GameItem.FindItem(noun, GameItem.gameItems);
+                }
+                // If still null, the item is not in the player's inventory nor the current room:
+                if (item == null)
+                {
+                    Console.WriteLine($"\n The {noun.ToLower()} cannot be found.");
+                    return false;
+                }
+
+                if (item.State.Equals(GameItem.ObjectState.CLOSED))
+                {
+                    if (Inventory.ContainsItem("KEY"))
+                    {
+                        Console.WriteLine("   (with key)");
+                        Console.WriteLine($"\n The {noun.ToLower()} is now locked.");
+                        item.State = GameItem.ObjectState.LOCKED;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n You are unable to lock the {item.Name}.");
+                    }
+                    return false;
+                }
+                else if(item.State.Equals(GameItem.ObjectState.LOCKED))
+                {
+                    Console.WriteLine($"\n The {item.Name} is already locked.");
+                }
+                else
+                {
+                    Console.WriteLine($"\n The {item.Name} cannot be locked.");
+                }
+            } 
+            
+            return false;
+        }
+
+
+        /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         * ==> TURN, ROTATE:
+         * ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
+         */
+        private bool CmdTurn(string noun, string playerVerb, List<GameItem> roomItems)
+        {
+            while (noun.Length == 0)
+            {
+                playerVerb.ToLower();
+                Console.Write($"\n {char.ToUpper(playerVerb[0]) + playerVerb.Substring(1).ToLower()} what? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                //Limit to items in room:
+                GameItem item = GameItem.FindItem(noun, roomItems);
+                if (item == null)
+                {
+                    //Check Inventory for an item to turn:
+                    item = GameItem.FindItem(noun, GameItem.gameItems);
+                }
+
+                // If null, the item is not in the player's inventory nor the current room:
+                if (item == null)
+                {
+                    //Logic for any non-official items:
+                    if (noun.Equals("ME"))
+                    {
+                        Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns,
+                            $"\n *MUSIC!* To everything (turn, turn, turn!) There is a season (turn, turn, turn!) And a time to every purpose, under heaven!  \n   ( the music fades... you feel better! )"));
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n The {noun.ToLower()} cannot be turned.");
+                    }
+                    return false;
+                }
+
+                //Item was found... check for visibility:
+                if ((int)item.State >= 1)
+                {
+                    //TODO: Special logic for turning items in certain rooms:
+                    // if(  *** SPECIAL OBJECT INTERACTIONS *** )
+                    // {
+
+                    // }
+                    // else
+                    // {
+
+                        Console.WriteLine($"\n You try to turn it... nothing happens.");
+                    
+                    // }
+                }
+
+            }
+            return false;
+        }
+
 
 
         /* ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~
@@ -1130,6 +1285,30 @@ namespace ReturnToTheMisersHouse
                 _ => " Houston, we have a problem!  Invalid Case!"
             };
             Console.WriteLine(oracleResponse);
+            return false;
+        }
+
+
+        private bool CmdSwim(int playerLocation)
+        {
+            //TODO:  If the player is in a place where they CAN swim (such as a pool), add that here.
+            //TODO:  If the player is in a bathroom or kitchen, you could TRY to swim in the kitchen sink!
+            
+            //Otherwise, pick a random, snarky response here:
+            Random rnd = new Random();
+            int randomResponse = rnd.Next(1, 8);
+            string oracleResponse = randomResponse switch
+            {
+                1 => " There is nowhere to swim.",
+                2 => " You can't swim here!",
+                3 => " That would be a pointless thing to do!",
+                4 => " That would be a useless effort.",
+                5 => " You close your eyes and try out some of the latest techniques you learned in your swim class.",
+                6 => " Unless you plan on swimming through the ground or the carpet, you are out of luck!",
+                7 => " Perhaps if you know Scrooge McDuck, he'd let you swim in his money bin!",
+                _ => " Houston, we have a problem!  Invalid Case!"
+            };
+            Console.WriteLine($"\n {oracleResponse}");
             return false;
         }
 

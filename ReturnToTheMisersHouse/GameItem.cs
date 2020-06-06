@@ -7,17 +7,37 @@ namespace ReturnToTheMisersHouse
 {
     class GameItem
     {
-
-        //TODO:  Create some matrix / dictionaries for reference when trying to do specific things
-        //       such as eating items.  So, have a "FOOD" matrix, where
-        //       Alternatively, classify objects with an enumeration on general purposes of 
-        //       the device.  Example:  FOOD, TOOL, TREASURE, etc.
-        //       Creating things like this allow for more intelligatn interactions, as well as 
-        //       reducing the amount of spurious logic and checks.  Having lists of items that
-        //       are classified in matrixes with specific responses for different scenarios,
-        //       as well as generic responses, cleverly chosen, when items do not match,
-        //       allow for generic responses most of the time.
-        //       The flexiility I have in a modern programming language allows for so much!
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // TODO: Create some matrix / dictionaries for reference when trying to do specific things such as eating items.
+        //       So, have a "FOOD" matrix, where there is a description of what happens when trying to eat something.
+        //       In addition, classify objects with an enumeration on general purposes of the item.
+        //           > Example:  FOOD, TOOL, TREASURE, etc.
+        //       Creating things like this allow for more intelligatn interactions, as well as reducing the amount of 
+        //       spurious logic and checks.  Having lists of items that are classified in matrixes with specific responses 
+        //       for different scenarios, as well as generic responses, cleverly chosen, when items do not match,
+        //       allow for generic responses as well.  
+        //
+        // TODO: Create a Dictionary (aka Java HashMap) where items can be fixed!  Both ones the player breaks 
+        //       (to an extent) as well as items that need fixing in the game.  But a traditional Dictionary 
+        //       might not quite do it.  Need to be able to associate TWO items together (the broken item and the tool)
+        //       as well as a description that is rendered to the user when they are successful in fixing an item.
+        //
+        // TODO: Track how much (quantity, percentage) an item has been used.  For instance, a water bottle, 
+        //       when the player drinks from it.  Or a spool of string or a coil of rope when used to fix things.
+        //       That adds an awful lot of complexity, since items are no longer "black & white", and can track 
+        //       "gray areas" of partial usage.  It may not be worth implementing at all. ;-)
+        //
+        // TODO: I still need to implement tracking of weight and size to limit how much the player can carry.
+        //       And I need to track things like fatigue and rest, and possibly even the passage of time!
+        //       THAT'S what I was trying to remember!  I'll add a TODO to the MisersHouseMain class.
+        //
+        // IN other words, there is significant complexity and depth I still need to add to the foundation 
+        // of the game before I think about item classifications or partial usage of an item!  Cool, but not yet!
+        //
+        // The flexibility of a modern programming language allows for so much!  In the past, a program could only reach
+        // a certain point before the maintainability of that program became overwhelming and nigh impossible.
+        // Object-oriented programming languages allow data and associations can be represented by objects within the world.
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         public int LocationIndex { get; set; }  //Location that the object first appears
         public string ItemId { get; set; }      //Unique alphanumeric CONSTANT that is an ID for the item
@@ -80,20 +100,25 @@ namespace ReturnToTheMisersHouse
             return itemList;
         }
 
-
-        public static GameItem FindItem(string itemSearch, List<GameItem> itemList)
+        /*
+         * Find a specific item.  Note that this takes an item name as a keyword, as well as a
+         * list of items to search.  That way the calling method can send through either a subset
+         * of items to search (such as those items in their room), or the entire set of game items.
+         */ 
+        public static GameItem FindItem(string itemNameSearch, List<GameItem> itemList)
         {
-            GameItem gameItem = null;
-            if (itemSearch.Length >= 3)
+            GameItem itemMatch = null;
+            if (itemNameSearch.Length >= 3)
             {
                 foreach (var currentItem in itemList)
                 {
-                    gameItem = currentItem.ItemId.Contains(itemSearch) ? currentItem : null;
-                    if (gameItem != null) { break; }
+                    itemMatch = currentItem.ItemId.Contains(itemNameSearch) ? currentItem : null;
+                    if (itemMatch != null) { break; }
                 }
             }
-            return gameItem;
+            return itemMatch;
         }
+
 
         //GameItem[] gameItems; //Getting rid of the array, and making it a static List.  More flexible!
         //public static List<GameItem> gameItems = new List<GameItem>();

@@ -23,6 +23,30 @@ namespace ReturnToTheMisersHouse
         private static string ql = "\n\n\n\n"; //quadline
 
 
+        /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         *  TODO: Implement a chronometer into the game. :-)  In other words, track the passage of time.
+         *        Perhaps something simple, such as one minute for each move, and display a digital clock 
+         *        readout above, when the room screen refresh occurs.   Time :   3:43 pm  (or even just the time)
+         *        
+         *        So, there are two types of time passage I am thinking about:
+         *          1.) The game is ALWAYS turn-based.  In other words, time only passes when a command 
+         *              is actually entered by the player.  Otherwise, time stands still.
+         *                  
+         *          2.) Game's Global time:  For every move, time passes.  This allows us to display 
+         *              general, time-related events, such as "a full moon shines its rays through the window."
+         *              And global events can happen in the game.  "The chiming of a great clock can be heard!"
+         *              
+         *          3.) Also, specific passage of time can be captured in relation to a room or location.
+         *              Time is captured when entering the room, and something will happen if the player
+         *              doesn't respond within 'n' number of moves.  
+         *              
+         *        Since a great deal of exploration by the player occurs in teh game, it would lose a 
+         *        significant element of fun if EVERYTHING in the game was time-based move to move!
+         *        
+         *        NOTE:  These are things to think about... I have far more to get working first, before implementing this!
+         * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         */
+
         static void Main(string[] args)
         {
             //Add inventory items:

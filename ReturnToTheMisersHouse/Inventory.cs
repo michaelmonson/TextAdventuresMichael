@@ -96,6 +96,17 @@ namespace ReturnToTheMisersHouse
         }
 
 
+        public static GameItem GetInventoryItem(string item)
+        {
+            GameItem inventoryItem = null;
+            if (Inventory.ContainsItem(item))
+            {
+                inventoryItem = GameItem.FindItem(item, GameItem.gameItems);
+            }
+            return inventoryItem;
+        }
+
+
         public static bool isEmpty()
         {
             int inventoryItemCount = 0;
