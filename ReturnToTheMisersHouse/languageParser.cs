@@ -418,15 +418,26 @@ namespace ReturnToTheMisersHouse
             }
 
             //JUMP!  Only useful in certain rooms, but some default fun for the player!
-            if (playerInput == Verbs.JUMP.ToString() || playerInput == Verbs.LEAP.ToString())
+            if (playerVerb == Verbs.JUMP.ToString() || playerVerb == Verbs.LEAP.ToString())
             {
                 changeRooms = languageParser.CmdJump();
             }
 
             //SWIM!  Like other actions, swimming is ineffective in most rooms.
-            if (playerInput == Verbs.SWIM.ToString())
+            if (playerVerb == Verbs.SWIM.ToString())
             {
                 changeRooms = languageParser.CmdSwim(playerLocation);
+            }
+
+            //ATTACK!  Logic to handle the more violent impulses of our dear player:
+            // --> HIT, SLUG, PUNCH, ATTACK, PINCH, POUND, SHOOT, TARGET, STRIKE
+            if (playerVerb == Verbs.ATTACK.ToString() || playerVerb == Verbs.HIT.ToString()
+                || playerVerb == Verbs.SLUG.ToString() || playerVerb == Verbs.PUNCH.ToString()
+                || playerVerb == Verbs.PINCH.ToString() || playerVerb == Verbs.POUND.ToString()
+                || playerVerb == Verbs.SHOOT.ToString() || playerVerb == Verbs.TARGET.ToString()
+                || playerVerb == Verbs.STRIKE.ToString())
+            {
+                changeRooms = languageParser.CmdAttack(noun, playerVerb, playerLocation);
             }
 
             //HUGS MEAN LOVE!
@@ -1309,6 +1320,102 @@ namespace ReturnToTheMisersHouse
                 _ => " Houston, we have a problem!  Invalid Case!"
             };
             Console.WriteLine($"\n {oracleResponse}");
+            return false;
+        }
+
+
+        /*
+         * HIT, SLUG, PUNCH, ATTACK, PINCH, POUND, SHOOT, TARGET, STRIKE
+         * 
+         * TODO:  Over time, I may want to break these out into specific responses.
+         *   - All of these attack maneuvers and actions SHOULD be handled in here.
+         *   - Specific types of attacks can then be sub-divided within.
+         *   - Really, any type of attack should have a generic response
+         *   - It truly is a balance between development time and the level of detail we want to cover.
+         */
+        private bool CmdAttack(string noun, string playerVerb, int playerLocation)
+        {
+            while (noun.Length == 0)
+            {
+                Console.Write($"\n What do you desire to {playerVerb.ToLower()}? ");
+                var input = Console.ReadLine().ToUpper();
+                noun = input.Length > 0 ? input : "";
+            }
+
+            if (noun.Length > 0)
+            {
+                string verbAction = playerVerb.ToLower();
+                string playerNoun = noun.ToLower();
+                var item = GameItem.gameItems.Find(item => item.ItemId.Contains(noun));
+                if (item != null)
+                {
+                    if (item.State.Equals(GameItem.ObjectState.INVENTORY))
+                    {
+                        Console.WriteLine($" You take the {item.Name} out of your pack...");
+                        //Remove from player inventory:
+                        item.LocationIndex = playerLocation;
+                        item.State = GameItem.ObjectState.VISIBLE;
+                    }
+
+                    //Need to check that it exists in the room:
+                    if (item.LocationIndex.Equals(playerLocation) && item.State > 0)
+                    {
+                        /* TODO: Consider a matrix of responses for breaking certain items.
+                            * Some things cannot be attacked.
+                            * Also, make sure to protect certain items (such as treasures) against breakage.
+                            */
+                        if (item.State.Equals(GameItem.ObjectState.DAMAGED))
+                        {
+                            Console.WriteLine($"\n The {item.Name} is already damaged.  Must you attack it further?");
+                        }
+                        else
+                        {
+                            Random rnd = new Random();
+                            int randomResponse = rnd.Next(1, 9);
+                            var oracleResponse = randomResponse switch
+                            {
+                                1 => " There is nothing to attack.  So sorry.",
+                                2 => $" You attack the '{playerNoun}'!",
+                                3 => " That would be a pointless thing to attack!",
+                                4 => " That would be a useless effort.",
+                                5 => " You close your eyes and try out some of the latest techniques you learned in your martial arts class.  But the peace that spreads and flows within you makes your desire for violence disolve away like a bad dream...",
+                                6 => $" I've known some strange people, but fighting a {playerNoun}?",
+                                7 => " That would be a waste of time.",
+                                8 => " Nothing happens...",
+                                _ => " Houston, we have a problem!  Invalid Case!"
+                            };
+
+                            //For items that have specific responses... otherwise, answer generically with a random response chosen above.
+                            
+                            string itemResponse = item.ItemId switch
+                            {
+                                "KEY_BRASS" => $"You {verbAction} the {item.Name}, but it is well crafted and does not bend or break.",
+                                "MAT" => $"Finally able to vent some pent up hostility, you quickly reduce the {playerNoun} to a pile of strips!",
+                                "DOOR_FRONT" => $"You attempt to {verbAction} the {playerNoun}, but nothing happens!  With a great cry, you lunge and throw the entire weight of your body against the heavy wood and reinforced steel!  Not surprisingly, your violent actions fail to do it any harm... in fact, it barely budges.  Congratulations!  You have earned yourself a series of bruises and a nearly dislocated shoulder!",
+                                "MANGO_FOOD" => $"You {verbAction} the {item.Name}, and then throw it hard against the wall!  What is left of it slowly oozes to the floor.",
+                                "FLASHLIGHT" => $"What a foolish thing to {verbAction}!  Still, like a creature possessed, you slam the {playerNoun} repeatedly against the floor until the lens snaps off and the batteries fall out of the mangled cylinder!",
+                                "WATER_BOTTLE" => $"Are you serious?!  You may need your water!  I cannot let you damage your source of hydration!",
+                                _ => oracleResponse
+                            };
+                            Console.Write(MisersHouseMain.FormatTextWidth(MisersHouseMain.maxColumns, $"\n {itemResponse}"));
+
+                            if (item.Breakable)
+                            {
+                                item.State = GameItem.ObjectState.DAMAGED;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"\n You look around you, but the {noun.ToLower()} cannot be found here.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"\n I do not believe that the {noun.ToLower()} exists in this game.  Try something else!");
+                }
+            }
+
             return false;
         }
 
