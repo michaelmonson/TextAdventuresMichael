@@ -74,6 +74,7 @@ namespace ReturnToTheMisersHouse
 
         public enum ObjectState
         {
+            SAFE = 5,
             LOCKED = 4,
             CLOSED = 3,
             DAMAGED = 2,
@@ -125,29 +126,36 @@ namespace ReturnToTheMisersHouse
 
         public static List<GameItem> gameItems = new List<GameItem>
         {
-            new GameItem (0, "MAT",        "old door mat",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, false, true, 8, 5),
-            new GameItem (0, "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN,  new Dictionary<ObjectState, string> { }, true, true, false, false, 1, 1 ),
-            new GameItem (0, "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED,  new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, false, false, false, false, 200, 100 ),
-            new GameItem (1, "DOOR_FRONT", "heavy wooden door", ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked once more."}, false, false, false, false, 200, 100 )   //The door is locked again on the Foyer side.
-            //gameItems[0] = new GameItem(0, "MAT",        "old door mat", (int)ObjectState.VISIBLE, new Dictionary<int, string> { [(int)ObjectState.VISIBLE]="It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, 8, 5);
-            //gameItems[1] = new GameItem(0, "KEY_BRASS",  "brass door key", (int)ObjectState.HIDDEN, new Dictionary<int, string>(), true, true, 1, 1);
-            //gameItems[2] = new GameItem(0, "DOOR_FRONT", "heavy wooden door", (int)ObjectState.LOCKED, new Dictionary<int, string> { }, false, false, 200, 100);
-
-            //63065 DATA plastic bucket,26,vicious snake,4,charmed snake,-2,*golden leaf *,45
-            //63066 DATA* bulging moneybag *,46,>$<,-2,*diamond ring *,48
-            //63067 DATA* rare painting *,39,sword,13,rusty cross,23,penny,28
-            //63068 DATA piece of paper,31,parachute with no ripcord,34,oriental rug,6
-            //63069 DATA trapdoor marked 'danger',-2
-            //63070 DATA parachute ripcord,-2,portal in the north wall,-2
-            //63071 DATA pair of* ruby slippers *,-2,
-            //63072 DATA majestic staircase leading up,2
-            //63073 DATA majestic staircase leading down,27,battered book,11
-            //63074 DATA organ in the corner,21,open organ in the corner,-2
-            //63075 DATA cabinet on rollers against one wall over,5,repaired parachute,-2
-            //63076 DATA "sign saying 'drop coins for luck'",19
-
-
-            //return gameItems2;
+            new GameItem (0,  "MAT",        "old door mat",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "It is a vintage entrance mat, quite heavy, and beautifully made.  the dye has faded, but it appears to feature the face of a Gorgon, in a Roman or Greek style motif." }, true, true, false, true, 8, 5),
+            new GameItem (0,  "KEY_BRASS",  "brass door key",    ObjectState.HIDDEN,  new Dictionary<ObjectState, string> { }, true, true, false, false, 1, 1 ),
+            new GameItem (0,  "DOOR_FRONT", "heavy wooden door", ObjectState.LOCKED,  new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked.  It is far too heavy to force open.",  [ObjectState.VISIBLE] = "The door lies open... it bids you move forward!"}, false, false, false, false, 200, 100 ),
+            new GameItem (1,  "DOOR_FRONT", "heavy wooden door", ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.LOCKED] = "The door is locked once more." }, false, false, false, false, 200, 100 ),   //The door is locked again on the Foyer side.
+            new GameItem (2,  "STAIRCASE",  "majestic staircase",ObjectState.VISIBLE, new Dictionary<ObjectState,string>{ [ObjectState.VISIBLE] = "a majestic staircase leading up" }, false, false, false, false, 5000, 1000),
+            new GameItem (4,  "SNAKE",      "vicious snake",     ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.SAFE] = "the dangerous snake has been tamed."}, false, false, false, false, 0, 0),
+            new GameItem (5,  "CABINET",    "rolling cabinet",   ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "cabinet on rollers against one wall"}, true, false, true, false, 120, 50),
+            new GameItem (6,  "RUG",        "oriental rug",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, false, false, false, 20, 30),
+            new GameItem (6,  "TRAPDOOR",   "trapdoor marked 'danger'",     ObjectState.HIDDEN, new Dictionary<ObjectState, string> { }, false, false, true, false, 25, 20),
+            new GameItem (8,  "PORTAL",     "portal in the north wall",     ObjectState.HIDDEN, new Dictionary<ObjectState, string> { }, false, false, true, false, 2000, 80),
+            new GameItem (11, "BATTERED_BOOK", "battered book",  ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false, 8, 7),
+            new GameItem (13, "SWORD",      "sword of Elvish workmanship",  ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false, 6, 7),
+            new GameItem (19, "SIGN",       "quaint wooden sign", ObjectState.VISIBLE, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "the sign reads, 'drop coins for luck!''" }, false, false, false, false, 20, 16),
+            new GameItem (21, "ORGAN",      "organ in the corner", ObjectState.CLOSED, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "The organ stands open, and a beautiful light eminates from its stops and functions", [ObjectState.CLOSED] = "An organ stands in the corner, its lid closed."}, false, false, true, false, 800, 400),
+            new GameItem (21, "RIPCORD",    "parachute ripcord", ObjectState.HIDDEN, new Dictionary<ObjectState, string> { }, true, true, false, false, 5, 5),
+            new GameItem (21, "RUBY_SLIPPERS", "pair of *RUBY SLIPPERS*",   ObjectState.HIDDEN, new Dictionary<ObjectState, string> { }, true, true, false, false, 8, 6),
+            new GameItem (23, "CROSS",      "rusty cross",       ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, false, false, false, 40, 30),
+            new GameItem (26, "BUCKET",     "metal bucket",      ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false,3, 5),
+            new GameItem (27, "STAIRCASE",  "majestic staircase",ObjectState.VISIBLE,new Dictionary<ObjectState,string>{ [ObjectState.VISIBLE] = "a majestic staircase leading down" }, false, false, false, false, 5000, 1000),
+            new GameItem (28, "PENNY",      "tarnished penny",   ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false, 1, 1),
+            new GameItem (31, "PAPER",      "piece of paper",    ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, true, 1, 1),
+            new GameItem (34, "PARACHUTE",  "brightly coloured parachute",  ObjectState.DAMAGED, new Dictionary<ObjectState, string> { [ObjectState.VISIBLE] = "repaired parachute", [ObjectState.DAMAGED] = "parachute with no ripcord" }, true, true, false, true, 8, 30),
+            new GameItem (39, "PAINTING",   "*RARE PAINTING*",   ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, true, 10, 12),
+            new GameItem (45, "GOLDEN_LEAF","*GOLDEN LEAF*",     ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false,2, 1),
+            new GameItem (46, "MONEY_BAG",  "*BULGING MONEYBAG*",ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false, 8, 4),
+            new GameItem (48, "DIAMOND_RING", "*DIAMOND RING*",  ObjectState.VISIBLE, new Dictionary<ObjectState, string> { }, true, true, false, false, 1, 1),
+            //new GameItem ()
+            
+            //63066 DATA* bulging moneybag *,46,>$<,-2,*diamond ring *,48           //What is the '$" ?  Does it relate to the existing treasures?
+            
         };
 
     }
