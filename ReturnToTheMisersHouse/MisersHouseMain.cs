@@ -143,6 +143,20 @@ namespace ReturnToTheMisersHouse
             WriteColorizedLine(ConsoleColor.Green,      "\n   ``\"\"\"`\"`\"\"\"\"'))'\"\"\"\"`\"\"``");
             WriteColorizedLine(ConsoleColor.Green,      "\n               //                         ");
 
+            //Consider using a "verbatim string literal" similar to the "triple quote" in JavaScript, or the comment block in Java (but I lose my colors!)
+                string asciiHouse = @"
+                      ':.
+                         []___________
+                        /\            \
+                    ___/  \_____/\/_____\
+                ---/\___\ |''''''''''''|__\-------
+                   ||'''| |'' ' || ' ''|''|
+                   ``"""`"`""""'))'""""`""`
+                               //
+                ";            
+            WriteColorizedLine(ConsoleColor.White, asciiHouse);
+
+
             //Greet & Identify Player:
             Console.Write($"{dl} Greetings Weary Traveler! ");
             WriteColorizedLine(ConsoleColor.Cyan, $"{dl}   > What is thy name? ");
