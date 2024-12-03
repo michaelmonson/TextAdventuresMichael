@@ -134,14 +134,14 @@ namespace ReturnToTheMisersHouse
             WriteColorizedLine(ConsoleColor.Green, $"\n{dl} EXPLORE THE MISER'S HOUSE!");
 
             //Render ASCII HOUSE:
-            WriteColorizedLine(ConsoleColor.White,      "\n\n      ':.                ");
-            WriteColorizedLine(ConsoleColor.DarkGray, "\n         []___________         ");
-            WriteColorizedLine(ConsoleColor.DarkRed, "\n        /\\            \\       ");
-            WriteColorizedLine(ConsoleColor.DarkRed, "\n    ___/  \\_____/\\_____\\__    ");
-            WriteColorizedLine(ConsoleColor.DarkYellow, "\n---/\\___\\ |''''''''''''|__\\-------");
-            WriteColorizedLine(ConsoleColor.DarkYellow, "\n   ||'''| |'' ' || ' ''|''|");
-            WriteColorizedLine(ConsoleColor.Green, "\n   ``\"\"\"`\"`\"\"\"\"'))'\"\"\"\"`\"\"``");
-            WriteColorizedLine(ConsoleColor.Green, "\n               //                 ");
+            WriteColorizedLine(ConsoleColor.White,      "\n\n      ':.                               ");
+            WriteColorizedLine(ConsoleColor.DarkGray,   "\n         []___________                    ");
+            WriteColorizedLine(ConsoleColor.DarkRed,    "\n        /\\            \\                 ");
+            WriteColorizedLine(ConsoleColor.DarkRed,    "\n    ___/  \\_____/\\_____\\__             ");
+            WriteColorizedLine(ConsoleColor.DarkYellow, "\n---/\\___\\ |''''''''''''|__\\-------     ");
+            WriteColorizedLine(ConsoleColor.DarkYellow, "\n   ||'''| |'' ' || ' ''|''|               ");
+            WriteColorizedLine(ConsoleColor.Green,      "\n   ``\"\"\"`\"`\"\"\"\"'))'\"\"\"\"`\"\"``");
+            WriteColorizedLine(ConsoleColor.Green,      "\n               //                         ");
 
             //Greet & Identify Player:
             Console.Write($"{dl} Greetings Weary Traveler! ");
